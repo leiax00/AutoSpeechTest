@@ -5,8 +5,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
+from ui.component.load_file import LoadFile
 
-class ACAApp(QtWidgets.QMainWindow):
+
+class ACAApp(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ACAApp, self).__init__(parent)
         self.__init_ui()
@@ -17,9 +19,7 @@ class ACAApp(QtWidgets.QMainWindow):
 
     def set_content(self):
         top_layout = QtWidgets.QGridLayout()
-        top_layout.addWidget(QtWidgets.QPushButton(str(1)), 0, 0)
-        top_layout.addWidget(QtWidgets.QPushButton(str(2)), 0, 1)
-        top_layout.addWidget(QtWidgets.QPushButton(str(3)), 2, 3)
+        top_layout.addWidget(LoadFile(self), 0, 0)
         self.setLayout(top_layout)
 
     def set_basic_info(self):
