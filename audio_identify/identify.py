@@ -42,7 +42,7 @@ class AudioIdentify:
 
     def register_analyzer(self, a):
         """
-        :type a: audio_identify.collector.Collector
+        :type a: audio_identify.collector.Analyzer
         """
         if isinstance(a, Analyzer):
             a.start()
@@ -52,7 +52,7 @@ class AudioIdentify:
 
     def remove_analyzer(self, a):
         """
-        :type a: audio_identify.collector.Collector
+        :type a: audio_identify.collector.Analyzer
         """
         if isinstance(a, Analyzer):
             a.remove()
