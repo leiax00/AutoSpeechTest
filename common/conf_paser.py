@@ -42,5 +42,5 @@ def get_wav_mapping(scp_path=get_wav_scp_path(), text_path=get_wav_text_path()):
 
 
 if __name__ == '__main__':
-    mapping = get_wav_mapping()
-    print(mapping)
+    mapping1 = get_wav_mapping()
+    print(mapping1)
