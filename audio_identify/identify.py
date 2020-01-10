@@ -1,5 +1,4 @@
 # coding=utf-8
-from time import sleep
 
 from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
@@ -60,13 +59,16 @@ class AudioIdentify:
         else:
             print('invalid analyzer..., Analyzer:', a)
 
+    def release(self):
+        for collector in self.collectors:
+            collector.remove()
+        for analyzer in self.analyzers:
+            analyzer.remove()
+
 
 if __name__ == '__main__':
     ai = AudioIdentify()
-    # ai.register_collector(Collector('COM1'))
     ai.register_collector_by_com()
     ai.register_analyzer(Analyzer())
     ai.player.play_batch(ai.wav_mapping.get('打开空调'))
-    while True:
-        print('running....')
-        sleep(10)
+    ai.release()

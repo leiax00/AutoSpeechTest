@@ -9,4 +9,6 @@ class CorpusConf:
         'scp': 'train_mini/wav.scp',
         'text': 'train_mini/text'
     }
-    WAV_COUNT_ONE_CMDER = 10
+    WAV_COUNT_ONE_CMDER = 2
+    PLAY_SEPARATOR = 5  # 语音播报间隔
+    LOG_FILTER = ['agc handler']  # 过滤掉包含关键字的日志

@@ -1,35 +1,42 @@
 # coding=utf-8
 import threading
-from time import sleep
 
 import serial
 
-from audio_identify.asr_queue import QUEUE
+from audio_identify.asr_queue import aq
+from audio_identify.emit.emiter import Receiver, observer
+from audio_identify.filter.log_filter import log_filter
+from common.time_util import format_time
 
 
-class Collector(threading.Thread):
+class Collector(threading.Thread, Receiver):
     __start = True
 
     def __init__(self, com_number):
         super(Collector, self).__init__()
         self.com_number = com_number
         self.thread_name = '{0}:{1}'.format('collector', self.com_number)
-        # self.serial = serial.Serial(port=self.com_number, baudrate=115200, timeout=0.5)
+        self.serial = serial.Serial(port=self.com_number, baudrate=115200, timeout=0.5)
+        self.tmp_data = [format_time(), self.com_number]
+        observer.register(self)
 
     def run(self):
         self.listen()
 
     def listen(self):
-        # if not self.serial.isOpen():
-        #     self.serial.open()
+        if not self.serial.isOpen():
+            self.serial.open()
 
-        i = 0
         while Collector.__start:
-            # line = self.serial.readline()
-            QUEUE.put(self.thread_name + ', line:' + str(i))
-            i += 1
-            sleep(1)
+            line = self.serial.readline().decode(encoding='utf-8').strip('\r\n\t')
+            if line is not None and line != '' and not log_filter.need_filter(line):
+                self.tmp_data.append(line)
 
     def remove(self):
         Collector.__start = False
-        # self.serial.close()
+        self.serial.close()
+
+    def on_notify(self):
+        if len(self.tmp_data) > 2:
+            aq.send(self.tmp_data)
+            self.tmp_data = [format_time(), self.com_number]  # 可能存在多线程问题

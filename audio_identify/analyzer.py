@@ -1,7 +1,7 @@
 # coding=utf-8
 import threading
 
-from audio_identify.asr_queue import QUEUE
+from audio_identify.asr_queue import aq, AsrQueue
 
 
 class Analyzer(threading.Thread):
@@ -14,9 +14,9 @@ class Analyzer(threading.Thread):
         self.analyze()
 
     def analyze(self):
-        while True:
-            if not QUEUE.empty():
-                print(QUEUE.get())
+        while Analyzer.__start:
+            if not aq.empty():
+                print('analyzer:', aq.pop())
 
     @staticmethod
     def remove():
