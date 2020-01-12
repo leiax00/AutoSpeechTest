@@ -6,10 +6,8 @@ from time import sleep
 import pyaudio
 from pydub import AudioSegment
 
-from audio_identify.asr_queue import aq
 from audio_identify.audio_obj import AudioObj
 from audio_identify.emit.emiter import observer
-from common.time_util import format_time
 from conf.config import CorpusConf
 
 
@@ -27,10 +25,22 @@ class Player:
         sleep(CorpusConf.PLAY_SEPARATOR)
         observer.notify()
 
-    def play_batch(self, o_list, max_count=CorpusConf.WAV_COUNT_ONE_CMDER):
+    def play_batch(self, o_list, cmd_str='', max_count=CorpusConf.WAV_COUNT_ONE_CMDER):
         while max_count > 0:
             max_count -= 1
-            self.play(o_list[random.randint(0, len(o_list))])
+            wav = o_list[random.randint(0, len(o_list))]
+            print('play cmd:{0}, and wav:{1}'.format(cmd_str, wav))
+            self.play(wav)
+
+    def play_all(self, o_dict, max_count=CorpusConf.WAV_COUNT_ONE_CMDER):
+        """
+        :type o_dict: dict
+        :param o_dict: 命令词：音频列表
+        :param max_count: 单条命令重复次数（每次的音频不一样，内容一样）
+        :return:
+        """
+        for cmd_str, wav_list in o_dict.items():
+            self.play_batch(wav_list, cmd_str, max_count)
 
     class _Player:
         @staticmethod
