@@ -7,6 +7,11 @@ class AudioObj:
         self.content = content
         self.source = source
 
+    def __str__(self):
+        return self.__dict__.__str__()
+
 
 if __name__ == '__main__':
-    print(AudioObj().content)
+    obj = AudioObj('a', 'b', 'c')
+    print(obj.__dict__)
+    print(obj)

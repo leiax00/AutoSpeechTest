@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QApplication
 
 from audio_identify.identify import AudioIdentify
 from common.conf_paser import get_wav_mapping
+from common.logger import logger
+from common.time_util import format_time
 from conf.config import CorpusConf
 from ui.component.combo_checkbox import ComboCheckBox
 from ui.component.load_file import LoadFile
@@ -122,37 +124,37 @@ class ACAApp(QtWidgets.QDialog):
         """
         if conf_path is None:
             return
-        print('set software conf path: %s' % conf_path)
+        logger.info('set software conf path: %s' % conf_path)
 
     def load_wav(self, wav_path=None):
         if wav_path is None:
             return
-        print('set wav path:' % wav_path)
+        logger.info('set wav path:' % wav_path)
         self.service.wav_mapping = get_wav_mapping()
 
     def select_coms(self, com_l):
-        print('set com list: %s' % com_l)
+        logger.info('set com list: %s' % com_l)
         self.service.replace_collectors_by_com(com_l)
 
     def start_test(self):
-        print('start_test')
-        pass
+        logger.info('start_test')
+        self.service.process()
 
     def stop_test(self):
-        print('stop_test')
+        logger.info('stop_test')
         pass
 
     def output_wav_text(self):
-        print('output_wav_text')
+        logger.info('output_wav_text')
         pass
 
     def look_result(self):
-        print('output_wav_text')
+        logger.info('output_wav_text')
         pass
 
     def set_play_count(self):
         CorpusConf.WAV_COUNT_ONE_CMDER = int(self.play_count_box.currentText())
-        print('set play count:%d' % CorpusConf.WAV_COUNT_ONE_CMDER)
+        logger.info('set play count:%d' % CorpusConf.WAV_COUNT_ONE_CMDER)
 
 
 if __name__ == '__main__':

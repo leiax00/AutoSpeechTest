@@ -23,7 +23,7 @@ class Player:
         else:
             print('audio source may be error, type:', type(o))
         sleep(CorpusConf.PLAY_SEPARATOR)
-        observer.notify()
+        observer.notify(o)
 
     def play_batch(self, o_list, cmd_str='', max_count=CorpusConf.WAV_COUNT_ONE_CMDER):
         while max_count > 0:

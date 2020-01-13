@@ -75,10 +75,13 @@ class AudioIdentify:
         for analyzer in self.analyzers:
             analyzer.remove()
 
+    def process(self):
+        self.register_collector_by_com()
+        ai.register_analyzer(Analyzer())
+        ai.player.play_all(self.wav_mapping)
+        ai.release()
+
 
 if __name__ == '__main__':
     ai = AudioIdentify()
-    # ai.register_collector_by_com()
-    # ai.register_analyzer(Analyzer())
-    # ai.player.play_batch(ai.wav_mapping.get('打开空调'))
-    ai.release()
+    ai.process()

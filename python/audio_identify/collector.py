@@ -36,7 +36,7 @@ class Collector(threading.Thread, Receiver):
         Collector.__start = False
         self.serial.close()
 
-    def on_notify(self):
-        if len(self.tmp_data) > 2:
-            aq.send(self.tmp_data)
-            self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题
+    def on_notify(self, *o):
+        self.tmp_data.insert(2, o[0])
+        aq.send(self.tmp_data)
+        self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题

@@ -16,7 +16,8 @@ class Analyzer(threading.Thread):
     def analyze(self):
         while Analyzer.__start:
             if not aq.empty():
-                print('analyzer:', aq.pop())
+                obj = aq.pop()
+                print('analyzer: {0} -> {1}'.format(obj[2].content, obj))
 
     @staticmethod
     def remove():

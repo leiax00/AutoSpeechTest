@@ -20,9 +20,9 @@ class Observer:
         else:
             raise TypeError
 
-    def notify(self):
+    def notify(self, *o):
         for receiver in self.receivers:
-            receiver.on_notify()
+            receiver.on_notify(*o)
 
 
 observer = Observer()
