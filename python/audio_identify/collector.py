@@ -12,12 +12,12 @@ from common.time_util import format_time
 class Collector(threading.Thread, Receiver):
     __start = True
 
-    def __init__(self, com_number):
+    def __init__(self, com_device):
         super(Collector, self).__init__()
-        self.com_number = com_number
-        self.thread_name = '{0}:{1}'.format('collector', self.com_number)
-        self.serial = serial.Serial(port=self.com_number, baudrate=115200, timeout=0.5)
-        self.tmp_data = [format_time(), self.com_number]
+        self.com_device = com_device
+        self.thread_name = '{0}:{1}'.format('collector', self.com_device)
+        self.serial = serial.Serial(port=self.com_device, baudrate=115200, timeout=0.5)
+        self.tmp_data = [format_time(), self.com_device]
         observer.register(self)
 
     def run(self):
@@ -39,4 +39,4 @@ class Collector(threading.Thread, Receiver):
     def on_notify(self):
         if len(self.tmp_data) > 2:
             aq.send(self.tmp_data)
-            self.tmp_data = [format_time(), self.com_number]  # 可能存在多线程问题
+            self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题

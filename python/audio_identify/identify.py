@@ -15,10 +15,6 @@ class AudioIdentify:
         self.analyzers = []
         self.wav_mapping = get_wav_mapping()
 
-    def register_collector_by_com(self):
-        for device in self.com_devices:
-            self.register_collector(Collector(device))
-
     def register_collector(self, c):
         """
         :type c: audio_identify.collector.Collector
@@ -38,6 +34,20 @@ class AudioIdentify:
             self.collectors.remove(c)
         else:
             print('invalid collector..., c:', c)
+
+    def register_collector_by_com(self):
+        for device in self.com_devices:
+            self.register_collector(Collector(device))
+
+    def replace_collectors_by_com(self, com_l):
+        """
+        修改串口后，更新设置日志收集器
+        :param com_l: 新的串口列表
+        """
+        for collector in self.collectors:
+            self.remove_collector(collector)
+        for com in com_l:
+            self.register_collector(Collector(com))
 
     def register_analyzer(self, a):
         """
@@ -68,7 +78,7 @@ class AudioIdentify:
 
 if __name__ == '__main__':
     ai = AudioIdentify()
-    ai.register_collector_by_com()
-    ai.register_analyzer(Analyzer())
-    ai.player.play_batch(ai.wav_mapping.get('打开空调'))
+    # ai.register_collector_by_com()
+    # ai.register_analyzer(Analyzer())
+    # ai.player.play_batch(ai.wav_mapping.get('打开空调'))
     ai.release()

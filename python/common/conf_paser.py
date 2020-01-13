@@ -18,7 +18,10 @@ def get_cmdstr_by_config(file_path=get_cmder_path()):
     return tmp
 
 
-def get_wav_mapping(scp_path=get_wav_scp_path(), text_path=get_wav_text_path()):
+def get_wav_mapping(wav_path=get_wav_path()):
+    scp_path = os.path.join(wav_path, 'wav.scp')
+    text_path = os.path.join(wav_path, 'text')
+
     def read_file(p):
         tmp = {}
         with open(p, 'r+', encoding='utf-8') as f:

@@ -16,12 +16,8 @@ def get_cmder_path():
     return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.CMD_PATH)
 
 
-def get_wav_scp_path():
-    return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.WAV_MAPPING.get('scp'))
-
-
-def get_wav_text_path():
-    return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.WAV_MAPPING.get('text'))
+def get_wav_path():
+    return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.WAV_PATH)
 
 
 if __name__ == '__main__':
