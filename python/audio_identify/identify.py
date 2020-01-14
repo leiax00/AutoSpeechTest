@@ -1,10 +1,18 @@
 # coding=utf-8
+import codecs
+import json
+import os
+from time import sleep
 
 from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
 from audio_identify.wav_player import Player
-from common.conf_paser import get_wav_mapping
+from common.conf_paser import parse_wav
+from common.default_json_decoder import DefaultDecoder
+from common.logger import logger
 from common.serial_util import get_com_devices
+from common.time_util import format_time
+from conf.config import CorpusConf
 
 
 class AudioIdentify:
@@ -13,7 +21,9 @@ class AudioIdentify:
         self.com_devices = get_com_devices()
         self.collectors = []
         self.analyzers = []
-        self.wav_mapping = get_wav_mapping()
+        self.wav_mapping = parse_wav()
+        self.register_collector_by_com()
+        self.register_analyzer(Analyzer())
 
     def register_collector(self, c):
         """
@@ -76,10 +86,16 @@ class AudioIdentify:
             analyzer.remove()
 
     def process(self):
-        self.register_collector_by_com()
-        ai.register_analyzer(Analyzer())
-        ai.player.play_all(self.wav_mapping)
-        ai.release()
+        try:
+            self.player.play_all(self.wav_mapping)
+            self.release()
+        except Exception as e:
+            logger.error('error happen: %s' % e)
+
+    def output_wav_text(self):
+        file_name = 'test_wav_%s.json' % format_time(time_formatter="%Y%m%d%H%M%S")
+        with codecs.open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'w+', encoding='utf-8') as wf:
+            json.dump(self.wav_mapping, wf, cls=DefaultDecoder, indent=4, ensure_ascii=False)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 # coding=utf-8
 import sys
+from threading import Thread
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -7,9 +8,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
 from audio_identify.identify import AudioIdentify
-from common.conf_paser import get_wav_mapping
+from common.conf_paser import parse_wav
 from common.logger import logger
-from common.time_util import format_time
 from conf.config import CorpusConf
 from ui.component.combo_checkbox import ComboCheckBox
 from ui.component.load_file import LoadFile
@@ -18,8 +18,12 @@ from ui.component.load_file import LoadFile
 class ACAApp(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ACAApp, self).__init__(parent)
-        self.service = AudioIdentify()
+        self.__init_data()
         self.__init_ui()
+
+    def __init_data(self):
+        self.service = AudioIdentify()
+        self.threads = {}
 
     def __init_ui(self):
         self.__init_basic_info()
@@ -83,7 +87,7 @@ class ACAApp(QtWidgets.QDialog):
     def __init_com(self):
         w = QtWidgets.QWidget()
         a = QtWidgets.QHBoxLayout()
-        self.com_box = ComboCheckBox(items=self.service.com_devices, callback=self.select_coms)
+        self.com_box = ComboCheckBox(items=self.service.com_devices.copy(), callback=self.select_coms)
         a.addWidget(QtWidgets.QLabel('选择串口：'))
         a.addWidget(self.com_box)
         w.setLayout(a)
@@ -96,15 +100,15 @@ class ACAApp(QtWidgets.QDialog):
         emp.setMinimumWidth(80)
         self.start_btn = QtWidgets.QPushButton('开始测试')
         self.start_btn.clicked.connect(self.start_test)
-        self.stop_btn = QtWidgets.QPushButton('暂停测试')
-        self.stop_btn.clicked.connect(self.stop_test)
+        self.status_btn = QtWidgets.QPushButton('暂停测试')
+        self.status_btn.clicked.connect(self.status_change)
         self.out_wav = QtWidgets.QPushButton('输出语料')
         self.out_wav.clicked.connect(self.output_wav_text)
         self.result_btn = QtWidgets.QPushButton('查看报告')
         self.result_btn.clicked.connect(self.look_result)
         a.addWidget(emp)
         a.addWidget(self.start_btn)
-        a.addWidget(self.stop_btn)
+        a.addWidget(self.status_btn)
         a.addWidget(self.out_wav)
         a.addWidget(self.result_btn)
         w.setLayout(a)
@@ -130,23 +134,31 @@ class ACAApp(QtWidgets.QDialog):
         if wav_path is None:
             return
         logger.info('set wav path:' % wav_path)
-        self.service.wav_mapping = get_wav_mapping()
+        self.service.wav_mapping = parse_wav(wav_path)
 
     def select_coms(self, com_l):
         logger.info('set com list: %s' % com_l)
         self.service.replace_collectors_by_com(com_l)
 
     def start_test(self):
-        logger.info('start_test')
-        self.service.process()
+        name = 'start_thread'
+        logger.info('%s start....' % name)
+        self.threads[name] = Thread(name=name, target=self.service.process)
+        self.threads[name].start()
+        self.start_btn.setEnabled(False)
 
-    def stop_test(self):
-        logger.info('stop_test')
-        pass
+    def status_change(self):
+        """
+        stop仅操作播放是否暂停，后台的日志收集，数据处理空跑
+        :return:
+        """
+        logger.info('test status change....')
+        self.service.player.set_play(not self.service.player.is_play())
+        self.status_btn.setText('暂停测试' if self.service.player.is_play() else '继续测试')
 
     def output_wav_text(self):
         logger.info('output_wav_text')
-        pass
+        self.service.output_wav_text()
 
     def look_result(self):
         logger.info('output_wav_text')

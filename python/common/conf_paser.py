@@ -1,5 +1,6 @@
 # coding=utf-8
 import json
+import random
 
 from audio_identify.audio_obj import AudioObj
 from common.path_helper import *
@@ -18,7 +19,7 @@ def get_cmdstr_by_config(file_path=get_cmder_path()):
     return tmp
 
 
-def get_wav_mapping(wav_path=get_wav_path()):
+def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER):
     scp_path = os.path.join(wav_path, 'wav.scp')
     text_path = os.path.join(wav_path, 'text')
 
@@ -41,9 +42,31 @@ def get_wav_mapping(wav_path=get_wav_path()):
             obj = AudioObj(aid, cmd_str, combine_path(CorpusConf.REMOTE_BASE, wav_source))
             mapping[cmd_str] = mapping.get(cmd_str) or []
             mapping[cmd_str].append(obj)
+
+    filter_wav_mapping(mapping, wav_count_one_cmd)
+    return mapping
+
+
+def filter_wav_mapping(mapping, wav_count_one_cmd):
+    for k, v in mapping.items():
+        tmp = []
+        t_count = wav_count_one_cmd
+        while t_count > 0:
+            index = random.randint(0, len(v))
+            tmp.append(v[index])
+            t_count -= 1
+        mapping[k] = tmp
+
+
+def parse_wav(p=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER):
+    if os.path.isdir(p):
+        mapping = get_wav_mapping(p, wav_count_one_cmd)
+    else:
+        with open(p, 'r+', encoding='utf-8') as f:
+            mapping = json.load(f)
     return mapping
 
 
 if __name__ == '__main__':
-    mapping1 = get_wav_mapping()
+    mapping1 = parse_wav(wav_count_one_cmd=3)
     print(mapping1)

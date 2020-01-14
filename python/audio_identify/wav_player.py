@@ -1,5 +1,4 @@
 # coding=utf-8
-import random
 import wave
 from time import sleep
 
@@ -14,8 +13,13 @@ from conf.config import CorpusConf
 class Player:
     def __init__(self):
         self.player = Player._Player()
+        self.__is_play = True
 
-    def play(self, o):
+    def play(self, o, cmd_str=''):
+        while not self.__is_play:
+            pass
+
+        print('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
         if isinstance(o, AudioObj):
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
             print('audio_duration:', audio_duration)
@@ -25,22 +29,21 @@ class Player:
         sleep(CorpusConf.PLAY_SEPARATOR)
         observer.notify(o)
 
-    def play_batch(self, o_list, cmd_str='', max_count=CorpusConf.WAV_COUNT_ONE_CMDER):
-        while max_count > 0:
-            max_count -= 1
-            wav = o_list[random.randint(0, len(o_list))]
-            print('play cmd:{0}, and wav:{1}'.format(cmd_str, wav))
-            self.play(wav)
+    def play_batch(self, o_list, cmd_str='', repeat_play_count=CorpusConf.REPEAT_PLAY_COUNT):
+        while repeat_play_count > 0:
+            for o in o_list:
+                self.play(o, cmd_str)
+            repeat_play_count -= 1
 
-    def play_all(self, o_dict, max_count=CorpusConf.WAV_COUNT_ONE_CMDER):
+    def play_all(self, o_dict, repeat_play_count=CorpusConf.REPEAT_PLAY_COUNT):
         """
         :type o_dict: dict
         :param o_dict: 命令词：音频列表
-        :param max_count: 单条命令重复次数（每次的音频不一样，内容一样）
+        :param repeat_play_count: 单条命令重复次数（每次的音频不一样，内容一样）
         :return:
         """
         for cmd_str, wav_list in o_dict.items():
-            self.play_batch(wav_list, cmd_str, max_count)
+            self.play_batch(wav_list, cmd_str, repeat_play_count)
 
     class _Player:
         @staticmethod
@@ -61,6 +64,12 @@ class Player:
             stream.stop_stream()
             stream.close()
             p.terminate()
+
+    def set_play(self, bol):
+        self.__is_play = bool(bol)
+
+    def is_play(self):
+        return self.__is_play
 
 
 player = Player()
