@@ -1,7 +1,7 @@
 # coding=utf-8
 from json import JSONEncoder
 
-from audio_identify.audio_obj import AudioObj
+from obj.audio_obj import AudioObj
 
 
 class DefaultDecoder(JSONEncoder):

@@ -5,7 +5,7 @@ from time import sleep
 import pyaudio
 from pydub import AudioSegment
 
-from audio_identify.audio_obj import AudioObj
+from obj.audio_obj import AudioObj
 from audio_identify.emit.emiter import observer
 from conf.config import CorpusConf
 

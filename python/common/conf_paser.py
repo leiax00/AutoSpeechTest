@@ -2,7 +2,7 @@
 import json
 import random
 
-from audio_identify.audio_obj import AudioObj
+from obj.audio_obj import AudioObj
 from common.path_helper import *
 
 
