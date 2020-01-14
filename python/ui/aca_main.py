@@ -131,9 +131,9 @@ class ACAApp(QtWidgets.QDialog):
         logger.info('set software conf path: %s' % conf_path)
 
     def load_wav(self, wav_path=None):
-        if wav_path is None:
+        if wav_path is None or str(wav_path).strip() == '':
             return
-        logger.info('set wav path:' % wav_path)
+        logger.info('set wav path: %s' % wav_path)
         self.service.wav_mapping = parse_wav(wav_path)
 
     def select_coms(self, com_l):

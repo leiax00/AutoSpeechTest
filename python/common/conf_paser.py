@@ -2,6 +2,7 @@
 import json
 import random
 
+from common.logger import logger
 from obj.audio_obj import AudioObj
 from common.path_helper import *
 
@@ -39,7 +40,7 @@ def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_CO
     for aid, wav_source in scp_d.items():
         cmd_str = text_d.get(aid)
         if cmd_str in cmd_l:
-            obj = AudioObj(aid, cmd_str, combine_path(CorpusConf.REMOTE_BASE, wav_source))
+            obj = AudioObj().set_v(aid, cmd_str, combine_path(CorpusConf.REMOTE_BASE, wav_source))
             mapping[cmd_str] = mapping.get(cmd_str) or []
             mapping[cmd_str].append(obj)
 
@@ -59,11 +60,20 @@ def filter_wav_mapping(mapping, wav_count_one_cmd):
 
 
 def parse_wav(p=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER):
-    if os.path.isdir(p):
-        mapping = get_wav_mapping(p, wav_count_one_cmd)
-    else:
-        with open(p, 'r+', encoding='utf-8') as f:
-            mapping = json.load(f)
+    mapping = {}
+    try:
+        if os.path.isdir(p):
+            mapping = get_wav_mapping(p, wav_count_one_cmd)
+        else:
+            with open(p, 'r+', encoding='utf-8') as f:
+                mapping = json.load(f)
+                for k, v_l in mapping.items():
+                    tmp = []
+                    for v in v_l:
+                        tmp.append(json.loads(json.dumps(eval(v)), object_hook=AudioObj))
+                    mapping[k] = tmp
+    except Exception as e:
+        logger.error('failed to parse wav, err: %s', e)
     return mapping
 
 

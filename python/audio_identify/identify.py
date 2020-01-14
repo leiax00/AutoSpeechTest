@@ -2,13 +2,13 @@
 import codecs
 import json
 import os
-from time import sleep
 
 from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
+from audio_identify.emit.emiter import observer
 from audio_identify.wav_player import Player
 from common.conf_paser import parse_wav
-from common.default_json_decoder import DefaultDecoder
+from obj.default_json_decoder import DefaultDecoder
 from common.logger import logger
 from common.serial_util import get_com_devices
 from common.time_util import format_time
@@ -41,6 +41,7 @@ class AudioIdentify:
         """
         if isinstance(c, Collector):
             c.remove()
+            observer.remove(c)
             self.collectors.remove(c)
         else:
             print('invalid collector..., c:', c)

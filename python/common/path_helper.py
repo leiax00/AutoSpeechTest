@@ -17,6 +17,8 @@ def get_cmder_path():
 
 
 def get_wav_path():
+    if CorpusConf.WAV_PATH.strip() == '':
+        return CorpusConf.WAV_PATH.strip()
     return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.WAV_PATH)
 
 

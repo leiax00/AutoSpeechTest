@@ -25,6 +25,10 @@ class Observer:
         else:
             raise TypeError
 
+    def remove(self, o):
+        if issubclass(type(o), Receiver):
+            self.receivers.remove(o)
+
     def notify(self, *o):
         for receiver in self.receivers:
             print(type(receiver))
