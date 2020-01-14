@@ -3,6 +3,19 @@ import os
 
 
 class CorpusConf:
+    # 无上限为max, 无下限为min
+    SVM_LIST = [
+        '0-10',
+        '10-max'
+    ]
+    LIKELIHOOD_LIST = [
+        '0-10',
+        '10-max'
+    ]
+    CONFIDENCE_LIST = [
+        '0-10',
+        '10-max'
+    ]
     REMOTE_BASE = r'\\192.168.1.8'
     BASE_PATH = r'\corpus\project\mddc'  # 项目路径
     CMD_PATH = r'/res/config.json'

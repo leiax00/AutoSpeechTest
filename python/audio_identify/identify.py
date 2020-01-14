@@ -2,6 +2,7 @@
 import codecs
 import json
 import os
+from threading import Thread
 
 from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
@@ -13,6 +14,7 @@ from common.logger import logger
 from common.serial_util import get_com_devices
 from common.time_util import format_time
 from conf.config import CorpusConf
+from obj.default_log_obj import write_default_log_2_csv
 
 
 class AudioIdentify:
@@ -22,8 +24,18 @@ class AudioIdentify:
         self.collectors = []
         self.analyzers = []
         self.wav_mapping = parse_wav()
+        self.w_thread = None
+        self.write = True
+        self.__init_default()
+
+    def __init_default(self):
         self.register_collector_by_com()
         self.register_analyzer(Analyzer())
+        self.start_write_result_thread()
+
+    def start_write_result_thread(self, f=write_default_log_2_csv):
+        self.w_thread = Thread(target=f, args=(self.write,))
+        self.w_thread.start()
 
     def register_collector(self, c):
         """
