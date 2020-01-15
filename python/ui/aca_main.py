@@ -1,6 +1,11 @@
 # coding=utf-8
+import os
 import sys
 from threading import Thread
+
+# pyqt5的bug,需要添加这段代码才能找到pyqt5.dll
+if hasattr(sys, 'frozen'):
+    os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -170,6 +175,7 @@ class ACAApp(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
+    CorpusConf.load_conf()
     app = QApplication(sys.argv)
     window = ACAApp()
     window.show()
