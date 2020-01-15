@@ -4,7 +4,7 @@ import traceback
 from time import sleep
 
 from common.logger import logger
-from conf.config import CorpusConf
+from conf.config import corpus_conf
 from obj.audio_obj import AudioObj
 
 
@@ -25,11 +25,11 @@ class DefaultLogIn:
             eles = content.split(' ')
             tmp = r.get(eles[0]) or DefaultLogItem()
             tmp.word = eles[0]
-            i = self.get_interval_index(eles[1].split(':')[0], CorpusConf.CONFIDENCE_LIST)
+            i = self.get_interval_index(eles[1].split(':')[0], corpus_conf.confidence_list)
             tmp.confidence[i] = tmp.confidence[i] + 1
-            i = self.get_interval_index(eles[2].split(':')[0], CorpusConf.LIKELIHOOD_LIST)
+            i = self.get_interval_index(eles[2].split(':')[0], corpus_conf.likelihood_list)
             tmp.likelihood[i] = tmp.likelihood[i] + 1
-            i = self.get_interval_index(eles[2].split(':')[0], CorpusConf.SVM_LIST)
+            i = self.get_interval_index(eles[2].split(':')[0], corpus_conf.svm_list)
             tmp.svm[i] = tmp.svm[i] + 1
             tmp.count += 1
             r[tmp.word] = tmp
@@ -78,16 +78,16 @@ class DefaultLogItem:
     def __init__(self):
         self.count = 0
         self.word = ''
-        self.confidence = [0 for _ in CorpusConf.CONFIDENCE_LIST]
-        self.likelihood = [0 for _ in CorpusConf.LIKELIHOOD_LIST]
-        self.svm = [0 for _ in CorpusConf.SVM_LIST]
+        self.confidence = [0 for _ in corpus_conf.confidence_list]
+        self.likelihood = [0 for _ in corpus_conf.likelihood_list]
+        self.svm = [0 for _ in corpus_conf.svm_list]
         self.__column_name = None
 
     def get_column_name(self):
         if self.__column_name is None:
-            c_l = ['CONFIDENCE:%s' % v for v in CorpusConf.CONFIDENCE_LIST]
-            l_l = ['LIKELIHOOD:%s' % v for v in CorpusConf.LIKELIHOOD_LIST]
-            s_l = ['SVM:%s' % v for v in CorpusConf.SVM_LIST]
+            c_l = ['CONFIDENCE:%s' % v for v in corpus_conf.confidence_list]
+            l_l = ['LIKELIHOOD:%s' % v for v in corpus_conf.likelihood_list]
+            s_l = ['SVM:%s' % v for v in corpus_conf.svm_list]
             self.__column_name = ['识别词', '次数', *c_l, *l_l, *s_l]
         return self.__column_name
 
@@ -116,8 +116,8 @@ def write_default_log_2_csv(service):
     try:
         while service.can_write:
             for com, obj in result_map.items():
-                file_name = 'result_{0}.csv'.format(CorpusConf.LOG_NAME_BY_SERIAL.get(com))
-                with open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'w+', encoding='utf-8') as wf:
+                file_name = 'result_{0}.csv'.format(corpus_conf.log_name_by_serial.get(com))
+                with open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
                     rs = [v for _, v in dict(obj).items()]
                     column_names = rs[0].get_column_name()
 

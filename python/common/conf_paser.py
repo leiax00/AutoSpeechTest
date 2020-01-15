@@ -3,8 +3,9 @@ import json
 import random
 
 from common.logger import logger
-from obj.audio_obj import AudioObj
 from common.path_helper import *
+from conf.config import corpus_conf
+from obj.audio_obj import AudioObj
 
 
 def load_cmder(file_path=get_cmder_path()):
@@ -20,7 +21,7 @@ def get_cmdstr_by_config(file_path=get_cmder_path()):
     return tmp
 
 
-def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER):
+def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=corpus_conf.wav_count_one_cmder):
     scp_path = os.path.join(wav_path, 'wav.scp')
     text_path = os.path.join(wav_path, 'text')
 
@@ -40,7 +41,7 @@ def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_CO
     for aid, wav_source in scp_d.items():
         cmd_str = text_d.get(aid)
         if cmd_str in cmd_l:
-            obj = AudioObj().set_v(aid, cmd_str, combine_path(CorpusConf.REMOTE_BASE, wav_source))
+            obj = AudioObj().set_v(aid, cmd_str, combine_path(corpus_conf.remote_base, wav_source))
             mapping[cmd_str] = mapping.get(cmd_str) or []
             mapping[cmd_str].append(obj)
 
@@ -60,7 +61,7 @@ def filter_wav_mapping(mapping, wav_count_one_cmd):
         mapping[k] = tmp
 
 
-def parse_wav(p=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER):
+def parse_wav(p, wav_count_one_cmd):
     mapping = {}
     try:
         if os.path.isdir(p):
@@ -79,5 +80,5 @@ def parse_wav(p=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER
 
 
 if __name__ == '__main__':
-    mapping1 = parse_wav(wav_count_one_cmd=200)
+    mapping1 = parse_wav(get_wav_path(), wav_count_one_cmd=200)
     print(mapping1)

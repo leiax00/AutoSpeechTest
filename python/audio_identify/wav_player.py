@@ -7,7 +7,7 @@ from pydub import AudioSegment
 
 from audio_identify.emit.emiter import observer
 from common.logger import logger
-from conf.config import CorpusConf
+from conf.config import corpus_conf
 from obj.audio_obj import AudioObj
 
 
@@ -27,16 +27,16 @@ class Player:
             self.player.play_wav(o.source)
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
-        sleep(CorpusConf.PLAY_SEPARATOR)
+        sleep(corpus_conf.play_separator)
         observer.notify(o)
 
-    def play_batch(self, o_list, cmd_str='', repeat_play_count=CorpusConf.REPEAT_PLAY_COUNT):
+    def play_batch(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
         while repeat_play_count > 0:
             for o in o_list:
                 self.play(o, cmd_str)
             repeat_play_count -= 1
 
-    def play_all(self, o_dict, repeat_play_count=CorpusConf.REPEAT_PLAY_COUNT):
+    def play_all(self, o_dict, repeat_play_count):
         """
         :type o_dict: dict
         :param o_dict: 命令词：音频列表

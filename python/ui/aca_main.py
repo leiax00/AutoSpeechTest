@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QApplication
 from audio_identify.identify import AudioIdentify
 from common.conf_paser import parse_wav
 from common.logger import logger
-from conf.config import CorpusConf
+from conf.config import corpus_conf
 from ui.component.combo_checkbox import ComboCheckBox
 from ui.component.load_file import LoadFile
 
@@ -139,7 +139,7 @@ class ACAApp(QtWidgets.QDialog):
         if wav_path is None or str(wav_path).strip() == '':
             return
         logger.info('set wav path: %s' % wav_path)
-        self.service.wav_mapping = parse_wav(wav_path)
+        self.service.wav_mapping = parse_wav(wav_path, corpus_conf.wav_count_one_cmder)
 
     def select_coms(self, com_l):
         logger.info('set com list: %s' % com_l)
@@ -170,12 +170,12 @@ class ACAApp(QtWidgets.QDialog):
         pass
 
     def set_play_count(self):
-        CorpusConf.WAV_COUNT_ONE_CMDER = int(self.play_count_box.currentText())
-        logger.info('set play count:%d' % CorpusConf.WAV_COUNT_ONE_CMDER)
+        corpus_conf.wav_count_one_cmder = int(self.play_count_box.currentText())
+        logger.info('set play count:%d' % corpus_conf.wav_count_one_cmder)
 
 
 if __name__ == '__main__':
-    CorpusConf.load_conf()
+    corpus_conf.load_conf()
     app = QApplication(sys.argv)
     window = ACAApp()
     window.show()

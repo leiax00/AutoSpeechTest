@@ -4,7 +4,7 @@ from queue import Queue
 from threading import Thread
 
 from common.time_util import format_time
-from conf.config import CorpusConf
+from conf.config import corpus_conf
 
 
 class SimpleLogger:
@@ -19,7 +19,9 @@ class SimpleLogger:
         self.w_thread.start()
 
     def start_write(self):
-        with open(os.path.join(CorpusConf.OUTPUT_PATH, 'tool_log_{0}.log'.format(format_time(time_formatter='%Y%m%d%H%M%S'))), 'a', encoding='utf-8') as wf:
+        with open(os.path.join(corpus_conf.output_path,
+                               'tool_log_{0}.log'.format(format_time(time_formatter='%Y%m%d%H%M%S'))), 'a',
+                  encoding='utf-8') as wf:
             while True:
                 if not self.queue.empty():
                     wf.write('{0}\n'.format(self.queue.get()))

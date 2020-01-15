@@ -1,10 +1,10 @@
 # coding=utf-8
-from conf.config import CorpusConf
+from conf.config import corpus_conf
 
 
 class LogFilter:
     def __init__(self):
-        self.keywords = CorpusConf.LOG_FILTER
+        self.keywords = corpus_conf.log_filter
 
     def need_filter(self, str):
         for k in self.keywords:

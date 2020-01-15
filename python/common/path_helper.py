@@ -2,7 +2,7 @@
 import os
 import re
 
-from conf.config import CorpusConf
+from conf.config import corpus_conf
 
 
 def combine_path(base, *path1):
@@ -13,14 +13,14 @@ def combine_path(base, *path1):
 
 
 def get_cmder_path():
-    return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.CMD_PATH)
+    return combine_path(corpus_conf.remote_base, corpus_conf.base_path, corpus_conf.cmd_path)
 
 
 def get_wav_path():
-    if CorpusConf.WAV_PATH.strip() == '':
-        return CorpusConf.WAV_PATH.strip()
-    return combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.WAV_PATH)
+    if corpus_conf.wav_path.strip() == '':
+        return corpus_conf.wav_path.strip()
+    return combine_path(corpus_conf.remote_base, corpus_conf.base_path, corpus_conf.wav_path)
 
 
 if __name__ == '__main__':
-    print(combine_path(CorpusConf.REMOTE_BASE, CorpusConf.BASE_PATH, CorpusConf.CMD_PATH))
+    print(combine_path(corpus_conf.remote_base, corpus_conf.base_path, corpus_conf.cmd_path))
