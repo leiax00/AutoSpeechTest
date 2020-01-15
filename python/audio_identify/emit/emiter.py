@@ -31,7 +31,6 @@ class Observer:
 
     def notify(self, *o):
         for receiver in self.receivers:
-            print(type(receiver))
             receiver.on_notify(*o)
 
 

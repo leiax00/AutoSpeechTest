@@ -1,7 +1,12 @@
 # coding=utf-8
+import json
+import os
 import threading
 
 from audio_identify.asr_queue import aq
+from common.logger import logger
+from conf.config import CorpusConf
+from obj.default_json_decoder import DefaultDecoder
 from obj.default_log_obj import parse_default_log
 
 
@@ -18,11 +23,19 @@ class Analyzer(threading.Thread):
         while self.__start:
             if not aq.empty():
                 obj = aq.pop()
-                print('analyzer: {0} -> {1}'.format(obj[2].content, obj))
+                self.write_log(obj)
                 if self.func is not None:
                     self.func(obj)
 
-
     @staticmethod
-    def remove():
-        Analyzer.__start = False
+    def write_log(obj):
+        logger.info('analyzer: {0} -> {1}'.format(obj[2].content, obj))
+        file_name = '%s_test_log.log' % obj[1]
+        with open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'a', encoding='utf-8') as wf:
+            cmd_str = json.dumps(obj[2], cls=DefaultDecoder, ensure_ascii=False)
+            log_info = '' if len(obj) <= 3 else ' && '.join(obj[3:])
+            wf.write('cmd_info: {0} -> log: {1}\n'.format(cmd_str, log_info))
+
+    def remove(self):
+        self.__start = False
+        logger.info('success to close Analyzer thread, status:{0}'.format(self.__start))

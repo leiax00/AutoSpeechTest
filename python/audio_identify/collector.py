@@ -6,6 +6,7 @@ import serial
 from audio_identify.asr_queue import aq
 from audio_identify.emit.emiter import Receiver, observer
 from audio_identify.filter.log_filter import log_filter
+from common.logger import logger
 from common.time_util import format_time
 
 
@@ -33,6 +34,7 @@ class Collector(Receiver):
     def remove(self):
         self.__start = False
         self.serial.close()
+        logger.info('success to close thread, com:{0}'.format(self.com_device))
 
     def on_notify(self, *o):
         self.tmp_data.insert(2, o[0])

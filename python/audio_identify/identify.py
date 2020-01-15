@@ -25,7 +25,7 @@ class AudioIdentify:
         self.analyzers = []
         self.wav_mapping = parse_wav()
         self.w_thread = None
-        self.write = True
+        self.can_write = True
         self.__init_default()
 
     def __init_default(self):
@@ -34,7 +34,7 @@ class AudioIdentify:
         self.start_write_result_thread()
 
     def start_write_result_thread(self, f=write_default_log_2_csv):
-        self.w_thread = Thread(target=f, args=(self.write,))
+        self.w_thread = Thread(target=f, args=(self,))
         self.w_thread.start()
 
     def register_collector(self, c):
@@ -45,7 +45,7 @@ class AudioIdentify:
             c.start()
             self.collectors.append(c)
         else:
-            print('invalid collector..., c:', c)
+            logger.warn('invalid collector..., c:{0}'.format(c))
 
     def remove_collector(self, c):
         """
@@ -56,7 +56,7 @@ class AudioIdentify:
             observer.remove(c)
             self.collectors.remove(c)
         else:
-            print('invalid collector..., c:', c)
+            logger.warn('invalid collector..., c:{0}'.format(c))
 
     def register_collector_by_com(self):
         for device in self.com_devices:
@@ -80,7 +80,7 @@ class AudioIdentify:
             a.start()
             self.analyzers.append(a)
         else:
-            print('invalid analyzer..., Analyzer:', a)
+            logger.warn('invalid analyzer..., Analyzer::{0}'.format(a))
 
     def remove_analyzer(self, a):
         """
@@ -90,13 +90,15 @@ class AudioIdentify:
             a.remove()
             self.analyzers.remove(a)
         else:
-            print('invalid analyzer..., Analyzer:', a)
+            logger.warn('invalid analyzer..., Analyzer::{0}'.format(a))
 
     def release(self):
         for collector in self.collectors:
             collector.remove()
         for analyzer in self.analyzers:
             analyzer.remove()
+        self.can_write = False
+        logger.info('test finish!!!!!!')
 
     def process(self):
         try:

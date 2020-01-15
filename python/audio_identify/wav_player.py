@@ -5,9 +5,10 @@ from time import sleep
 import pyaudio
 from pydub import AudioSegment
 
-from obj.audio_obj import AudioObj
 from audio_identify.emit.emiter import observer
+from common.logger import logger
 from conf.config import CorpusConf
+from obj.audio_obj import AudioObj
 
 
 class Player:
@@ -19,13 +20,13 @@ class Player:
         while not self.__is_play:
             pass
 
-        print('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
+        logger.info('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
         if isinstance(o, AudioObj):
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
-            print('audio_duration:', audio_duration)
+            logger.info('audio_duration:{0}'.format(audio_duration))
             self.player.play_wav(o.source)
         else:
-            print('audio source may be error, type:', type(o))
+            logger.info('audio source may be error, type:{0}'.format(type(o)))
         sleep(CorpusConf.PLAY_SEPARATOR)
         observer.notify(o)
 
@@ -75,4 +76,4 @@ class Player:
 player = Player()
 if __name__ == '__main__':
     player.play(r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav')
-    player.play(AudioObj(source=r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav'))
+    player.play(AudioObj({'source': r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav'}))

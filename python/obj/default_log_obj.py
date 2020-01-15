@@ -1,13 +1,9 @@
 # coding=utf-8
-import json
 import os
-from threading import Timer, Thread
+import traceback
 from time import sleep
 
-import schedule as schedule
-
 from common.logger import logger
-from common.time_util import format_time
 from conf.config import CorpusConf
 from obj.audio_obj import AudioObj
 
@@ -65,11 +61,10 @@ class DefaultLogOut:
 
     def get_column_name(self):
         if self.__column_name is None:
-            self.__column_name = ['命令词']
+            self.__column_name = ['命令词', '正确率', '总次数']
             if len(self.items) > 0:
                 key0 = [key for key in self.items.keys()][0]
                 self.__column_name.extend(self.items[key0].get_column_name())
-            self.__column_name.extend(['总次数', '正确率'])
         return self.__column_name
 
     def get_right_count(self):
@@ -93,7 +88,7 @@ class DefaultLogItem:
             c_l = ['CONFIDENCE:%s' % v for v in CorpusConf.CONFIDENCE_LIST]
             l_l = ['LIKELIHOOD:%s' % v for v in CorpusConf.LIKELIHOOD_LIST]
             s_l = ['SVM:%s' % v for v in CorpusConf.SVM_LIST]
-            self.__column_name = ['识别词', *c_l, *l_l, *s_l, '次数']
+            self.__column_name = ['识别词', '次数', *c_l, *l_l, *s_l]
         return self.__column_name
 
 
@@ -114,38 +109,55 @@ def parse_default_log(obj_l):
     result_map[r.com][r.cmd] = r
 
 
-def write_default_log_2_csv(can_write):
-    while can_write:
-        logger.info('start to write result.....')
-        for com, obj in result_map.items():
-            file_name = 'result_%s.csv' % com
-            with open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'w+', encoding='utf-8') as wf:
-                rs = [v for _, v in dict(obj).items()]
-                column_names = rs[0].get_column_name()
+def write_default_log_2_csv(service):
+    """
+    :type service: audio_identify.identify.AudioIdentify
+    """
+    try:
+        while service.can_write:
+            for com, obj in result_map.items():
+                file_name = 'result_%s.csv' % com
+                with open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'w+', encoding='utf-8') as wf:
+                    rs = [v for _, v in dict(obj).items()]
+                    column_names = rs[0].get_column_name()
 
-                row_format = ','.join(['%s' for _ in range(0, len(column_names))]) + '\n'
-                wf.write(row_format % tuple(column_names))
-                for r in rs:
-                    index = 0
-                    for _, v in r.items.items():
-                        if index == 0:
-                            wf.write(row_format % (
-                                    (r.cmd, v.word) + tuple(v.confidence) + tuple(v.likelihood) + tuple(v.svm) + (
-                            v.count, r.count, r.rate)))
-                        else:
-                            wf.write(row_format % (
-                                    ('', v.word) + tuple(v.confidence) + tuple(v.likelihood) + tuple(v.svm) + (
-                                v.count, '', '')))
-                        index += 1
-        sleep(10)
+                    row_format = ','.join(['%s' for _ in range(0, len(column_names))]) + '\n'
+                    wf.write(row_format % tuple(column_names))
+                    for r in rs:
+                        index = 0
+                        for _, v in r.items.items():
+                            if index == 0:
+                                items = ((r.cmd, r.rate, r.count, v.word, v.count) + tuple(v.confidence)
+                                         + tuple(v.likelihood) + tuple(v.svm))
+                                print(row_format, items)
+                                wf.write(row_format % items)
+                            else:
+                                items = (('', '', '', v.word, v.count) + tuple(v.confidence)
+                                         + tuple(v.likelihood) + tuple(v.svm))
+                                print(row_format, items)
+                                wf.write(row_format % items)
+                            index += 1
+            sleep(10)
+    except Exception as e:
+        logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
 
 
 if __name__ == '__main__':
-    aa = ['2020-01-14 14:55:24', 'COM5', AudioObj().set_v('a', '小美小美', 'w+'),
-          'OK decode result is 小美小美 98.787186:40.000000 1.055722:0.520000 3.542980:-10.000000',
-          'OK decode result is 小美小美1 98.787186:40.000000 1.055722:0.520000 3.542980:-10.000000']
+    aa = ['2020-01-14 14:55:24', 'COM5',
+          AudioObj().set_v('O1051_5461', '打开空调', '\\\\192.168.1.8\\corpus\\train\\wavs\\O1051\\O1051_5461.wav'),
+          'OK decode result is 小美小美 98.372200:40.000000 0.769101:0.520000 2.835265:-10.000000',
+          'OK decode result is 打开空调 97.535637:30.000000 0.885568:0.300000 3.179217:-10.000000']
+    bb = ['2020-01-14 14:55:24', 'COM5',
+          AudioObj().set_v('O1051_5461', '关闭空调', '\\\\192.168.1.8\\corpus\\train\\wavs\\O1051\\O1051_5461.wav')]
     parse_default_log(aa)
-    parse_default_log(aa)
-    write_default_log_2_csv(True)
+    parse_default_log(bb)
+
+
+    class a:
+        def __init__(self):
+            self.can_write = True
+
+
+    write_default_log_2_csv(a())
     while True:
         pass
