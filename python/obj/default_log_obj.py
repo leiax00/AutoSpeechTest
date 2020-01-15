@@ -129,12 +129,12 @@ def write_default_log_2_csv(service):
                             if index == 0:
                                 items = ((r.cmd, r.rate, r.count, v.word, v.count) + tuple(v.confidence)
                                          + tuple(v.likelihood) + tuple(v.svm))
-                                print(row_format, items)
+                                logger.info('pick bug: {0} ---- {1}'.format(row_format, items))
                                 wf.write(row_format % items)
                             else:
                                 items = (('', '', '', v.word, v.count) + tuple(v.confidence)
                                          + tuple(v.likelihood) + tuple(v.svm))
-                                print(row_format, items)
+                                logger.info('pick bug1: {0} ---- {1}'.format(row_format, items))
                                 wf.write(row_format % items)
                             index += 1
             sleep(10)
