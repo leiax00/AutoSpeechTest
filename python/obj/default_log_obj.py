@@ -116,7 +116,7 @@ def write_default_log_2_csv(service):
     try:
         while service.can_write:
             for com, obj in result_map.items():
-                file_name = 'result_%s.csv' % com
+                file_name = 'result_{0}.csv'.format(CorpusConf.LOG_NAME_BY_SERIAL.get(com))
                 with open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'w+', encoding='utf-8') as wf:
                     rs = [v for _, v in dict(obj).items()]
                     column_names = rs[0].get_column_name()
@@ -151,13 +151,3 @@ if __name__ == '__main__':
           AudioObj().set_v('O1051_5461', '关闭空调', '\\\\192.168.1.8\\corpus\\train\\wavs\\O1051\\O1051_5461.wav')]
     parse_default_log(aa)
     parse_default_log(bb)
-
-
-    class a:
-        def __init__(self):
-            self.can_write = True
-
-
-    write_default_log_2_csv(a())
-    while True:
-        pass

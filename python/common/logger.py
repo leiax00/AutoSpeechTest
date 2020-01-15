@@ -15,6 +15,7 @@ class SimpleLogger:
         self.level_error = 'ERROR'
         self.level_debug = 'DEBUG'
         self.w_thread = Thread(name='log_write', target=self.start_write)
+        self.w_thread.setDaemon(True)
         self.w_thread.start()
 
     def start_write(self):

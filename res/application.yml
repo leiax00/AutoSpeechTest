@@ -5,9 +5,9 @@ app:
     cmd_path: /res/config.json  # 命令词配置文件相对工程的路径
     wav_path: train_mini  # 语料相对工程的路径
   controller:
-    wav_count_one_cmder: 2  # 一条命令词的语料数量
+    wav_count_one_cmder: 3  # 一条命令词的语料数量
     repeat_play_count: 1  # 一条语料的播放次数
-    play_separator: 2  # 每次播放的时间间隔，单位: 秒
+    play_separator: 1.5  # 每次播放的时间间隔，单位: 秒
   log:
     log_filter:
       - agc handler
@@ -21,3 +21,10 @@ app:
     svm:
       - 0-10
       - 10-max
+  mapping:  # 串口和版本的映射关系,serial和version两个数组一一对应
+    serial:
+      - COM3
+      - COM5
+    version:
+      - mddc-01-B
+      - mddc

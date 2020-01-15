@@ -29,6 +29,8 @@ class CorpusConf:
     SOFT_ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
     OUTPUT_PATH = os.path.join(SOFT_ROOT, 'output')
 
+    LOG_NAME_BY_SERIAL = {}
+
     @staticmethod
     def load_conf(path=os.path.join(SOFT_ROOT, 'res', 'application.yml')):
         with open(path, 'r', encoding='utf-8') as rf:
@@ -49,6 +51,10 @@ class CorpusConf:
         CorpusConf.PLAY_SEPARATOR = conf['app']['controller']['play_separator']
 
         CorpusConf.LOG_FILTER = conf['app']['log']['log_filter']
+        serials = conf['app']['mapping']['serial']
+        versions = conf['app']['mapping']['version']
+        for i in range(0, len(serials)):
+            CorpusConf.LOG_NAME_BY_SERIAL[serials[i]] = versions[i]
         print('success to load application.yml')
 
 

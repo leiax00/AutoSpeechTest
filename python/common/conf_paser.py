@@ -50,12 +50,13 @@ def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_CO
 
 def filter_wav_mapping(mapping, wav_count_one_cmd):
     for k, v in mapping.items():
+        if wav_count_one_cmd > len(v):
+            logger.warn('wav num is not enough, use all wavs, cmd:{0}, len:{1}'.format(k, len(v)))
+            wav_count_one_cmd = len(v)
+        index_l = random.sample(range(0, len(v)), wav_count_one_cmd)
         tmp = []
-        t_count = wav_count_one_cmd
-        while t_count > 0:
-            index = random.randint(0, len(v))
-            tmp.append(v[index])
-            t_count -= 1
+        for i in index_l:
+            tmp.append(v[i])
         mapping[k] = tmp
 
 
@@ -78,5 +79,5 @@ def parse_wav(p=get_wav_path(), wav_count_one_cmd=CorpusConf.WAV_COUNT_ONE_CMDER
 
 
 if __name__ == '__main__':
-    mapping1 = parse_wav(wav_count_one_cmd=3)
+    mapping1 = parse_wav(wav_count_one_cmd=200)
     print(mapping1)

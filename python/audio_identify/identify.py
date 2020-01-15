@@ -67,8 +67,8 @@ class AudioIdentify:
         修改串口后，更新设置日志收集器
         :param com_l: 新的串口列表
         """
-        for collector in self.collectors:
-            self.remove_collector(collector)
+        while len(self.collectors) > 0:
+            self.remove_collector(self.collectors[0])
         for com in com_l:
             self.register_collector(Collector(com))
 

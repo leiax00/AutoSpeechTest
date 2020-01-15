@@ -30,7 +30,7 @@ class Analyzer(threading.Thread):
     @staticmethod
     def write_log(obj):
         logger.info('analyzer: {0} -> {1}'.format(obj[2].content, obj))
-        file_name = '%s_test_log.log' % obj[1]
+        file_name = '{0}_test_log.log'.format(CorpusConf.LOG_NAME_BY_SERIAL.get(obj[1]))
         with open(os.path.join(CorpusConf.OUTPUT_PATH, file_name), 'a', encoding='utf-8') as wf:
             cmd_str = json.dumps(obj[2], cls=DefaultDecoder, ensure_ascii=False)
             log_info = '' if len(obj) <= 3 else ' && '.join(obj[3:])
