@@ -1,4 +1,6 @@
 # coding=utf-8
+import os
+import shutil
 import wave
 from time import sleep
 
@@ -27,7 +29,6 @@ class Player:
             self.player.play_wav(o.source)
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
-        sleep(corpus_conf.play_separator)
         observer.notify(o)
 
     def play_batch(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
@@ -49,22 +50,27 @@ class Player:
     class _Player:
         @staticmethod
         def play_wav(wav_name):
-            wf = wave.open(wav_name, 'rb')
-            max_len = 1024
-            p = pyaudio.PyAudio()
-            stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                            channels=wf.getnchannels(),
-                            rate=wf.getframerate(),
-                            output=True)
+            tmp_file_path = shutil.copy(wav_name, corpus_conf.temp_path)
+            try:
+                with wave.open(tmp_file_path, 'rb') as wf:
+                    max_len = 1024
+                    p = pyaudio.PyAudio()
+                    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                                    channels=wf.getnchannels(),
+                                    rate=wf.getframerate(),
+                                    output=True)
 
-            data = wf.readframes(max_len)
-            while len(data) > 0:
-                stream.write(data)
-                data = wf.readframes(max_len)
+                    data = wf.readframes(max_len)
+                    while len(data) > 0:
+                        stream.write(data)
+                        data = wf.readframes(max_len)
 
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
+                    stream.stop_stream()
+                    stream.close()
+                    p.terminate()
+            finally:
+                sleep(corpus_conf.play_separator)
+                os.remove(tmp_file_path)
 
     def set_play(self, bol):
         self.__is_play = bool(bol)

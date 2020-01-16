@@ -34,7 +34,7 @@ class AudioIdentify:
         self.start_write_result_thread()
 
     def start_write_result_thread(self, f=write_default_log_2_csv):
-        self.w_thread = Thread(target=f, args=(self,))
+        self.w_thread = Thread(target=f, args=(self,), daemon=True)
         self.w_thread.start()
 
     def register_collector(self, c):

@@ -29,7 +29,7 @@ class SimpleLogger:
 
     def info(self, msg):
         info = '[%s**%s] %s' % (format_time(), self.level_info, msg)
-        if not info.startswith('pick bug'):
+        if 'pick bug' not in info:
             print(info)
         self.queue.put(info)
 

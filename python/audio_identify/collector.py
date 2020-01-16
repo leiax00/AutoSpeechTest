@@ -18,6 +18,7 @@ class Collector(Receiver):
         self.thread_name = '{0}:{1}'.format('collector', self.com_device)
         self.serial_com = None
         self.tmp_data = [format_time(), self.com_device]
+        self.setDaemon(True)
 
     def run(self):
         while self.serial_com is None:
