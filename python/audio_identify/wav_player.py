@@ -29,6 +29,7 @@ class Player:
             self.player.play_wav(o.source)
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
+        sleep(corpus_conf.play_separator)
         observer.notify(o)
 
     def play_batch(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
@@ -69,7 +70,6 @@ class Player:
                     stream.close()
                     p.terminate()
             finally:
-                sleep(corpus_conf.play_separator)
                 os.remove(tmp_file_path)
 
     def set_play(self, bol):
