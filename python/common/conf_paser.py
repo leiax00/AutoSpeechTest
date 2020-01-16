@@ -8,12 +8,12 @@ from conf.config import corpus_conf
 from obj.audio_obj import AudioObj
 
 
-def load_cmder(file_path=get_cmder_path()):
+def load_cmder(file_path):
     with open(file_path, 'r+', encoding='utf-8') as f:
         return json.load(f).get('words')
 
 
-def get_cmdstr_by_config(file_path=get_cmder_path()):
+def get_cmdstr_by_config(file_path):
     tmp = []
     cmders = load_cmder(file_path)
     for item in cmders:
@@ -37,7 +37,7 @@ def get_wav_mapping(wav_path=get_wav_path(), wav_count_one_cmd=corpus_conf.wav_c
 
     mapping = {}
     scp_d, text_d = read_file(scp_path), read_file(text_path)
-    cmd_l = get_cmdstr_by_config()
+    cmd_l = get_cmdstr_by_config(get_cmder_path())
     for aid, wav_source in scp_d.items():
         cmd_str = text_d.get(aid)
         if cmd_str in cmd_l:

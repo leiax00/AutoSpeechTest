@@ -4,6 +4,8 @@ import sys
 from threading import Thread
 
 # pyqt5的bug,需要添加这段代码才能找到pyqt5.dll
+from time import sleep
+
 if hasattr(sys, 'frozen'):
     os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
 
@@ -146,12 +148,23 @@ class ACAApp(QtWidgets.QDialog):
         self.service.replace_collectors_by_com(com_l)
 
     def start_test(self):
-        name = 'start_thread'
+        name = 'play_thread'
         logger.info('%s start....' % name)
-        self.threads[name] = Thread(name=name, target=self.service.process)
-        self.threads[name].setDaemon(True)
+        self.threads[name] = Thread(name=name, target=self.service.player.play_all,
+                                    args=(self.service.wav_mapping, corpus_conf.repeat_play_count), daemon=True)
+
+        def listen_play():
+            while self.threads[name].is_alive():
+                if self.start_btn.isEnabled():
+                    self.start_btn.setEnabled(False)
+                sleep(.5)
+            else:
+                self.start_btn.setEnabled(True)
+                logger.info('%s end....' % name)
+
+        self.threads['listen_play'] = Thread(name=name, target=listen_play, daemon=True)
         self.threads[name].start()
-        self.start_btn.setEnabled(False)
+        self.threads['listen_play'].start()
 
     def status_change(self):
         """
