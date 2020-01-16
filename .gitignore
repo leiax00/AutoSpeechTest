@@ -4,3 +4,7 @@
 venv/
 *.pyc
 *.iml
+target
+*.spec
+output
+python/ui/build

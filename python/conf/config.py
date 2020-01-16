@@ -29,6 +29,8 @@ class CorpusConf:
         self.log_filter = ['agc handler']  # 过滤掉包含关键字的日志
         self.soft_root = os.path.join(os.path.dirname(__file__), '..', '..')
         self.output_path = os.path.join(self.soft_root, 'output')
+        if not os.path.exists(self.output_path):
+            os.mkdir(self.output_path)
 
         self.log_name_by_serial = {}
 
