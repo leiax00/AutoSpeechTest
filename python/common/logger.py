@@ -29,7 +29,8 @@ class SimpleLogger:
 
     def info(self, msg):
         info = '[%s**%s] %s' % (format_time(), self.level_info, msg)
-        print(info)
+        if not info.startswith('pick bug'):
+            print(info)
         self.queue.put(info)
 
     def warn(self, msg):
