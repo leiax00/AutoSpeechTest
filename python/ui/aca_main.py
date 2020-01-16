@@ -149,6 +149,7 @@ class ACAApp(QtWidgets.QDialog):
         name = 'start_thread'
         logger.info('%s start....' % name)
         self.threads[name] = Thread(name=name, target=self.service.process)
+        self.threads[name].setDaemon(True)
         self.threads[name].start()
         self.start_btn.setEnabled(False)
 

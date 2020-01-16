@@ -23,7 +23,7 @@ class AudioIdentify:
         self.com_devices = get_com_devices()
         self.collectors = []
         self.analyzers = []
-        self.wav_mapping = parse_wav(get_wav_path(), corpus_conf.wav_count_one_cmder)
+        self.wav_mapping = []
         self.w_thread = None
         self.can_write = True
         self.__init_default()
@@ -67,10 +67,16 @@ class AudioIdentify:
         修改串口后，更新设置日志收集器
         :param com_l: 新的串口列表
         """
-        while len(self.collectors) > 0:
-            self.remove_collector(self.collectors[0])
+        start_coms = [c.com_device for c in self.collectors]
+        start_collectors = {c.com_device: c for c in self.collectors}
         for com in com_l:
-            self.register_collector(Collector(com))
+            if com not in start_coms:
+                self.register_collector(Collector(com))
+            else:
+                start_coms.remove(com)
+        # 移除未选中的串口
+        for com in start_coms:
+            self.remove_collector(start_collectors.get(com))
 
     def register_analyzer(self, a):
         """
@@ -108,6 +114,7 @@ class AudioIdentify:
             logger.error('error happen: %s' % e)
 
     def output_wav_text(self):
+        self.wav_mapping = parse_wav(get_wav_path(), corpus_conf.wav_count_one_cmder)
         file_name = 'test_wav_%s.json' % format_time(time_formatter="%Y%m%d%H%M%S")
         with codecs.open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
             json.dump(self.wav_mapping, wf, cls=DefaultDecoder, indent=4, ensure_ascii=False)
