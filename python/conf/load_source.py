@@ -81,10 +81,11 @@ class LoadSource:
 
     def filter_wav_mapping(self, wav_count_one_cmd):
         for k, v in self.wav_mapping.items():
+            count = wav_count_one_cmd
             if wav_count_one_cmd > len(v):
                 logger.warn('wav num is not enough, use all wavs, cmd:{0}, len:{1}'.format(k, len(v)))
-                wav_count_one_cmd = len(v)
-            index_l = random.sample(range(0, len(v)), wav_count_one_cmd)
+                count = len(v)
+            index_l = random.sample(range(0, len(v)), count)
             tmp = []
             for i in index_l:
                 tmp.append(v[i])

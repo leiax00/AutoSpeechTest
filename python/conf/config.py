@@ -46,6 +46,7 @@ class CorpusConf:
             os.mkdir(self.output_path)
 
         self.log_name_by_serial = {}
+        self.product = ''
 
     def load_conf(self, p=None):
         if p is None:
@@ -71,6 +72,7 @@ class CorpusConf:
         self.play_separator = conf['app']['controller']['play_separator']
 
         self.log_filter = conf['app']['log']['log_filter']
+        self.product = conf['app']['mapping']['product']
         serials = conf['app']['mapping']['serial']
         versions = conf['app']['mapping']['version']
         for i in range(0, len(serials)):

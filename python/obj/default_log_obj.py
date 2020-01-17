@@ -4,6 +4,7 @@ import traceback
 from time import sleep
 
 from common.logger import logger
+from common.time_util import format_time
 from conf.config import corpus_conf
 from obj.audio_obj import AudioObj
 
@@ -121,7 +122,9 @@ def write_default_log_2_csv(service):
             for com, com_result_d in result_map.items():
                 if len(com_result_d) == 0:
                     continue
-                file_name = 'result_{0}.csv'.format(corpus_conf.log_name_by_serial.get(com))
+                file_name = '{0}_{1}_{2}.csv'.format(corpus_conf.log_name_by_serial.get(com),
+                                                     corpus_conf.wav_count_one_cmder,
+                                                     format_time(time_formatter="%y%m%d"))
                 with open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
                     cmds_result = [v for _, v in dict(com_result_d).items()]
                     row_format = write_csv_header(cmds_result, wf)

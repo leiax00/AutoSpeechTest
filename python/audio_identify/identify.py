@@ -8,8 +8,8 @@ from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
 from audio_identify.emit.emiter import observer
 from audio_identify.wav_player import Player
-from common.conf_paser import get_wav_path
 from common.logger import logger
+from common.path_helper import get_wav_path
 from common.serial_util import get_com_devices
 from common.time_util import format_time
 from conf.config import corpus_conf
@@ -116,7 +116,8 @@ class AudioIdentify:
 
     def output_wav_text(self):
         self.wav_mapping = LoadSource().parse_wav(get_wav_path(), corpus_conf.wav_count_one_cmder)
-        file_name = 'test_wav_%s.json' % format_time(time_formatter="%Y%m%d%H%M%S")
+        file_name = '{0}_{1}_{2}.json'.format(corpus_conf.product, format_time(time_formatter="%y%m%d"),
+                                              corpus_conf.wav_count_one_cmder)
         with codecs.open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
             json.dump(self.wav_mapping, wf, cls=DefaultDecoder, indent=4, ensure_ascii=False)
 
