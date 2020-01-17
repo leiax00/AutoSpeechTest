@@ -147,12 +147,12 @@ def write_one_cmd_log(cmd_result, row_format, wf):
         if index == 0:
             items = ((cmd_result.cmd, cmd_result.rate, cmd_result.count, v.word, v.count)
                      + tuple(v.confidence) + tuple(v.likelihood) + tuple(v.svm))
-            logger.info('pick bug: {0} ---- {1}'.format(row_format, items))
+            # logger.info('pick bug: {0} ---- {1}'.format(row_format, items))
             wf.write(row_format % items)
         else:
             items = (('', '', '', v.word, v.count) + tuple(v.confidence)
                      + tuple(v.likelihood) + tuple(v.svm))
-            logger.info('pick bug1: {0} ---- {1}'.format(row_format, items))
+            # logger.info('pick bug1: {0} ---- {1}'.format(row_format, items))
             wf.write(row_format % items)
         index += 1
 
