@@ -103,13 +103,13 @@ def parse_default_log(obj_l):
     com = log_obj.com
     cmd = log_obj.wav_obj.content
     result_map[com] = result_map.get(com) or {}
-    r = result_map[com].get(cmd) or DefaultLogOut()
-    r.cmd = cmd
-    r.com = com
-    r.count = r.count + 1
-    log_obj.parse_log(r.items)
-    r.rate = '%.4f' % float(r.get_right_count() / r.count)
-    result_map[r.com][r.cmd] = r
+    log_output = result_map[com].get(cmd) or DefaultLogOut()
+    log_output.cmd = cmd
+    log_output.com = com
+    log_output.count = log_output.count + 1
+    log_obj.parse_log(log_output.items)
+    log_output.rate = '%.4f' % float(log_output.get_right_count() / log_output.count)
+    result_map[log_output.com][log_output.cmd] = log_output
 
 
 def write_default_log_2_csv(service):
@@ -124,28 +124,37 @@ def write_default_log_2_csv(service):
                 file_name = 'result_{0}.csv'.format(corpus_conf.log_name_by_serial.get(com))
                 with open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
                     cmds_result = [v for _, v in dict(com_result_d).items()]
-                    # 最大程度获取列名
-                    column_names = get_cloumn_names(cmds_result)
-                    row_format = ','.join(['%s' for _ in range(0, len(column_names))]) + '\n'
-                    wf.write(row_format % tuple(column_names))
+                    row_format = write_csv_header(cmds_result, wf)
                     for cmd_result in cmds_result:
-                        index = 0
-                        log_items = sorted(cmd_result.items.items(), key=lambda k: k[1].count, reverse=True)
-                        for _, v in log_items:
-                            if index == 0:
-                                items = ((cmd_result.cmd, cmd_result.rate, cmd_result.count, v.word, v.count)
-                                         + tuple(v.confidence) + tuple(v.likelihood) + tuple(v.svm))
-                                logger.info('pick bug: {0} ---- {1}'.format(row_format, items))
-                                wf.write(row_format % items)
-                            else:
-                                items = (('', '', '', v.word, v.count) + tuple(v.confidence)
-                                         + tuple(v.likelihood) + tuple(v.svm))
-                                logger.info('pick bug1: {0} ---- {1}'.format(row_format, items))
-                                wf.write(row_format % items)
-                            index += 1
+                        write_one_cmd_log(cmd_result, row_format, wf)
             sleep(10)
     except Exception as e:
         logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
+
+
+def write_csv_header(cmds_result, wf):
+    # 最大程度获取列名
+    column_names = get_cloumn_names(cmds_result)
+    row_format = ','.join(['%s' for _ in range(0, len(column_names))]) + '\n'
+    wf.write(row_format % tuple(column_names))
+    return row_format
+
+
+def write_one_cmd_log(cmd_result, row_format, wf):
+    index = 0
+    log_items = sorted(cmd_result.items.items(), key=lambda k: k[1].count, reverse=True)
+    for _, v in log_items:
+        if index == 0:
+            items = ((cmd_result.cmd, cmd_result.rate, cmd_result.count, v.word, v.count)
+                     + tuple(v.confidence) + tuple(v.likelihood) + tuple(v.svm))
+            logger.info('pick bug: {0} ---- {1}'.format(row_format, items))
+            wf.write(row_format % items)
+        else:
+            items = (('', '', '', v.word, v.count) + tuple(v.confidence)
+                     + tuple(v.likelihood) + tuple(v.svm))
+            logger.info('pick bug1: {0} ---- {1}'.format(row_format, items))
+            wf.write(row_format % items)
+        index += 1
 
 
 def get_cloumn_names(cmds_result):

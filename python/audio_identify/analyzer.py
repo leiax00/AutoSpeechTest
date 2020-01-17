@@ -1,12 +1,10 @@
 # coding=utf-8
-import json
 import os
 import threading
 
 from audio_identify.asr_queue import aq
 from common.logger import logger
 from conf.config import corpus_conf
-from obj.default_json_decoder import DefaultDecoder
 from obj.default_log_obj import parse_default_log
 
 
