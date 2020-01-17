@@ -30,9 +30,10 @@ app:
       - 0-10
       - 10-max
   mapping:  # 串口和版本的映射关系,serial和version两个数组一一对应
+    product: mddc
     serial:
       - COM3
       - COM5
-    version:  # 项目名_年_月_日_单条音频的语音数量
-      - mddc_2019_12_20_200
-      - mddc_2020_01_10_200
+    version:  # 项目名_版本号
+      - mddc_191220
+      - mddc_200110
