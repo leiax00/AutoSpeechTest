@@ -19,10 +19,20 @@ class CorpusConf:
             '0-10',
             '10-max'
         ]
+        self.remote_host = r'192.168.1.8'
+        self.remote_port = 22
+        self.remote_username = 'root'
+        self.remote_password = 'root'
+
         self.remote_base = r'\\192.168.1.8'
-        self.base_path = r'\corpus\project\mddc'  # 项目路径
-        self.cmd_path = r'/res/config.json'
-        self.wav_path = 'train_mini'
+        self.cmd_path = r'\corpus\project\mddc\res\config.json'
+
+        self.wav_path = r'\corpus\train\wavs'
+        self.wav_schema = ['A']
+        self.wav_load_mode = 1
+        self.retrieve_script = 'python3 retrieve_wav.py {0} {1} {2}'.format(self.wav_path, '&'.join(self.wav_schema),
+                                                                            self.cmd_path)
+
         self.wav_count_one_cmder = 2
         self.repeat_play_count = 1
         self.play_separator = 2  # 语音播报间隔
@@ -48,10 +58,13 @@ class CorpusConf:
         self.likelihood_list = conf['app']['interval']['likelihood']
         self.confidence_list = conf['app']['interval']['confidence']
 
-        self.remote_base = conf['app']['path']['remote_base']
-        self.base_path = conf['app']['path']['base_path']
-        self.cmd_path = conf['app']['path']['cmd_path']
-        self.wav_path = conf['app']['path']['wav_path']
+        self.remote_base = conf['app']['remote_base']
+        self.cmd_path = conf['app']['cmd_path']
+        self.wav_path = conf['app']['wav']['wav_path']
+        self.wav_schema = conf['app']['wav']['wav_schema']
+        self.wav_load_mode = int(conf['app']['wav']['load_mode'])
+        self.retrieve_script = conf['app']['wav']['retrieve_script'].format(self.wav_path, '&'.join(self.wav_schema),
+                                                                            self.cmd_path)
 
         self.wav_count_one_cmder = conf['app']['controller']['wav_count_one_cmder']
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
@@ -62,6 +75,11 @@ class CorpusConf:
         versions = conf['app']['mapping']['version']
         for i in range(0, len(serials)):
             self.log_name_by_serial[serials[i]] = versions[i]
+
+        self.remote_host = conf['app']['remote']['host']
+        self.remote_port = int(conf['app']['remote']['port'])
+        self.remote_username = conf['app']['remote']['username']
+        self.remote_password = conf['app']['remote']['password']
         print('success to load application.yml')
 
 

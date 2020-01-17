@@ -13,14 +13,12 @@ def combine_path(base, *path1):
 
 
 def get_cmder_path():
-    return combine_path(corpus_conf.remote_base, corpus_conf.base_path, corpus_conf.cmd_path)
+    return combine_path(corpus_conf.remote_base, corpus_conf.cmd_path)
 
 
 def get_wav_path():
-    if corpus_conf.wav_path.strip() == '':
-        return corpus_conf.wav_path.strip()
-    return combine_path(corpus_conf.remote_base, corpus_conf.base_path, corpus_conf.wav_path)
+    return combine_path(corpus_conf.remote_base, corpus_conf.wav_path)
 
 
 if __name__ == '__main__':
-    print(combine_path(corpus_conf.remote_base, corpus_conf.base_path, corpus_conf.cmd_path))
+    print(combine_path(corpus_conf.remote_base, corpus_conf.cmd_path))

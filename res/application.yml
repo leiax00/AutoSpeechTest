@@ -1,9 +1,17 @@
 app:
-  path:  # 获取语料的基准路径
-    remote_base: \\192.168.1.8  # 远程服务器的路径
-    base_path: \corpus\project\mddc  # 项目工程的基准路径
-    cmd_path: /res/config.json  # 命令词配置文件相对工程的路径
-    wav_path: train_mini  # 语料相对工程的路径
+  remote:
+    host: 192.168.1.8
+    port: 22
+    username: root
+    password:  root
+  remote_base: \\192.168.1.8  # 远程服务器的路径
+  cmd_path: \corpus\project\mddc\res\config.json  # 命令词路径
+  wav:
+    load_mode: 1  # 1表示输入语料目录， 2表示输入wav.scp和text的目录
+    wav_path: \corpus\train\wavs  # 语料库路径
+    wav_schema:  # 读取以什么开头的语音
+      - A
+    retrieve_script: python3 retrieve_wav.py {0} {1} {2}  # 0:wav_path; 1:wav_schema; 2:cmd_path
   controller:
     wav_count_one_cmder: 5  # 一条命令词的语料数量
     repeat_play_count: 1  # 一条语料的播放次数
@@ -13,11 +21,11 @@ app:
       - agc handler
   interval: # 配置取值区间，用于识别计数，当无上限时，配置为 “x-max”; 当无下限时，配置为“min-x”（x表示数字）
     confidence:
-      - 0-10
-      - 10-max
+      - 0-30
+      - 30-max
     likelihood:
-      - 0-10
-      - 10-max
+      - 0-0.35
+      - 0.35-max
     svm:
       - 0-10
       - 10-max
@@ -25,6 +33,6 @@ app:
     serial:
       - COM3
       - COM5
-    version:
-      - mddc-01-B-12-20
-      - mddc-01-A-01-10
+    version:  # 项目名_年_月_日_单条音频的语音数量
+      - mddc_2019_12_20_200
+      - mddc_2020_01_10_200

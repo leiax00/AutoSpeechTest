@@ -1,13 +1,7 @@
 # coding=utf-8
-import os
 import sys
 from threading import Thread
-
-# pyqt5的bug,需要添加这段代码才能找到pyqt5.dll
 from time import sleep
-
-if hasattr(sys, 'frozen'):
-    os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -15,9 +9,11 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
 from audio_identify.identify import AudioIdentify
-from common.conf_paser import parse_wav
 from common.logger import logger
+from common.ssh_util import ssh_exec
 from conf.config import corpus_conf
+from conf.load_source import LoadSource
+from obj.real_monitor_obj import RealMonitor
 from ui.component.combo_checkbox import ComboCheckBox
 from ui.component.load_file import LoadFile
 
@@ -27,6 +23,7 @@ class ACAApp(QtWidgets.QDialog):
         super(ACAApp, self).__init__(parent)
         self.__init_data()
         self.__init_ui()
+        self.__init_wav()
 
     def __init_data(self):
         self.service = AudioIdentify()
@@ -35,6 +32,14 @@ class ACAApp(QtWidgets.QDialog):
     def __init_ui(self):
         self.__init_basic_info()
         self.__init_content()
+
+    def __init_wav(self):
+        def retrieve_wav():
+            self.monitor_label.setText('wav检索中\n请检索完成再进行操作')
+            ssh_exec()
+            self.monitor_label.setText(format(RealMonitor()))
+        self.threads['retrieve_wav'] = Thread(name='retrieve_wav', target=retrieve_wav, daemon=True)
+        self.threads['retrieve_wav'].start()
 
     def __init_content(self):
         self.top_layout = QtWidgets.QGridLayout()
@@ -79,13 +84,7 @@ class ACAApp(QtWidgets.QDialog):
         self.monitor_label = QtWidgets.QLabel()
         self.monitor_label.setStyleSheet('background-color: rgb(238,229,222);')
         self.monitor_label.setMinimumSize(300, 200)
-        self.monitor_label.setText('''
-  播放进度：0 / 0
-  已播时长：00:00:00
-  播放内容：
-  识别内容：   
-实时准确率: 0.00%
-        ''')
+        self.monitor_label.setText(format(RealMonitor()))
         a.addWidget(self.monitor_label)
 
         w.setLayout(a)
@@ -141,7 +140,7 @@ class ACAApp(QtWidgets.QDialog):
         if wav_path is None or str(wav_path).strip() == '':
             return
         logger.info('set wav path: %s' % wav_path)
-        self.service.wav_mapping = parse_wav(wav_path, corpus_conf.wav_count_one_cmder)
+        self.service.wav_mapping = LoadSource().parse_wav(wav_path, corpus_conf.wav_count_one_cmder)
 
     def select_coms(self, com_l):
         logger.info('set com list: %s' % com_l)
@@ -149,6 +148,7 @@ class ACAApp(QtWidgets.QDialog):
 
     def start_test(self):
         name = 'play_thread'
+        listen_name = 'listen_{0}'.format(name)
         logger.info('%s start....' % name)
         self.threads[name] = Thread(name=name, target=self.service.player.play_all,
                                     args=(self.service.wav_mapping, corpus_conf.repeat_play_count), daemon=True)
@@ -162,9 +162,9 @@ class ACAApp(QtWidgets.QDialog):
                 self.start_btn.setEnabled(True)
                 logger.info('%s end....' % name)
 
-        self.threads['listen_play'] = Thread(name=name, target=listen_play, daemon=True)
+        self.threads[listen_name] = Thread(name=listen_name, target=listen_play, daemon=True)
         self.threads[name].start()
-        self.threads['listen_play'].start()
+        self.threads[listen_name].start()
 
     def status_change(self):
         """
@@ -176,8 +176,9 @@ class ACAApp(QtWidgets.QDialog):
         self.status_btn.setText('暂停测试' if self.service.player.is_play() else '继续测试')
 
     def output_wav_text(self):
-        logger.info('output_wav_text')
+        logger.info('begin to output wav_text')
         self.service.output_wav_text()
+        logger.info('output wav_text end....')
 
     def look_result(self):
         logger.info('output_wav_text')
@@ -189,6 +190,7 @@ class ACAApp(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
+    print('app start......')
     corpus_conf.load_conf()
     app = QApplication(sys.argv)
     window = ACAApp()
