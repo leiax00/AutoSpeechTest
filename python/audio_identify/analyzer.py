@@ -33,7 +33,7 @@ class Analyzer(threading.Thread):
         logger.info('analyzer: {0} -> {1}'.format(obj[2].content, obj))
         file_name = '{0}_test_log.log'.format(corpus_conf.log_name_by_serial.get(obj[1]))
         with open(os.path.join(corpus_conf.output_path, file_name), 'a', encoding='utf-8') as wf:
-            cmd_str = json.dumps(obj[2], cls=DefaultDecoder, ensure_ascii=False)
+            cmd_str = '{0}:{1}'.format(obj[2].content, obj[2].aid)
             log_info = '' if len(obj) <= 3 else ' && '.join(obj[3:])
             wf.write('cmd_info: {0} -> log: {1}\n'.format(cmd_str, log_info))
 

@@ -67,6 +67,9 @@ class DefaultLogOut:
                 self.__column_name.extend(self.items[key0].get_column_name())
         return self.__column_name
 
+    def exist_items(self):
+        return len(self.items) > 0
+
     def get_right_count(self):
         o = self.items.get(self.cmd) or None
         if o is None:
@@ -115,20 +118,23 @@ def write_default_log_2_csv(service):
     """
     try:
         while service.can_write:
-            for com, obj in result_map.items():
+            for com, com_result_d in result_map.items():
+                if len(com_result_d) == 0:
+                    continue
                 file_name = 'result_{0}.csv'.format(corpus_conf.log_name_by_serial.get(com))
                 with open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
-                    rs = [v for _, v in dict(obj).items()]
-                    column_names = rs[0].get_column_name()
-
+                    cmds_result = [v for _, v in dict(com_result_d).items()]
+                    # 最大程度获取列名
+                    column_names = get_cloumn_names(cmds_result)
                     row_format = ','.join(['%s' for _ in range(0, len(column_names))]) + '\n'
                     wf.write(row_format % tuple(column_names))
-                    for r in rs:
+                    for cmd_result in cmds_result:
                         index = 0
-                        for _, v in r.items.items():
+                        log_items = sorted(cmd_result.items.items(), key=lambda k: k[1].count, reverse=True)
+                        for _, v in log_items:
                             if index == 0:
-                                items = ((r.cmd, r.rate, r.count, v.word, v.count) + tuple(v.confidence)
-                                         + tuple(v.likelihood) + tuple(v.svm))
+                                items = ((cmd_result.cmd, cmd_result.rate, cmd_result.count, v.word, v.count)
+                                         + tuple(v.confidence) + tuple(v.likelihood) + tuple(v.svm))
                                 logger.info('pick bug: {0} ---- {1}'.format(row_format, items))
                                 wf.write(row_format % items)
                             else:
@@ -140,6 +146,16 @@ def write_default_log_2_csv(service):
             sleep(10)
     except Exception as e:
         logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
+
+
+def get_cloumn_names(cmds_result):
+    item = cmds_result[-1]
+    for cmd_result in cmds_result:
+        if cmd_result.exist_items():
+            item = cmd_result
+            break
+    column_names = item.get_column_name()
+    return column_names
 
 
 if __name__ == '__main__':
