@@ -5,6 +5,7 @@ import sys
 
 
 def retrieve_train_wav(wav_path, wav_schema, cmd_path):
+    print(wav_path, wav_schema, cmd_path)
     result = {}
     cmd_l = get_cmdstr_by_config(cmd_path)
     dirs = os.listdir(wav_path)
@@ -28,7 +29,12 @@ def retrieve_train_wav(wav_path, wav_schema, cmd_path):
 
 def load_cmder(cmd_path):
     with open(cmd_path, 'r+', encoding='utf-8') as f:
-        return json.load(f).get('words')
+        words = json.load(f).get('words')
+        tmp = []
+        for item in words:
+            if item.get('type') == 'cmd':
+                tmp.append(item)
+        return tmp
 
 
 def get_cmdstr_by_config(cmd_path):
@@ -45,11 +51,9 @@ def write_result_2_file(wav_path, content):
 
 
 if __name__ == '__main__':
-    wp = r'\corpus\train\wavs'
-    ws = r'A'
-    cp = r'\corpus\project\mddc\res\config.json'
-    argv = [wp.replace('\\', '/'), ws.split('&'), cp.replace('\\', '/')]
-    for i in range(1, len(sys.argv)):
-        argv[i-1] = sys.argv[i]
-    retrieve_train_wav(argv[0], argv[1], argv[2])
+    size = len(sys.argv)
+    wp = r'\corpus\train\wavs' if size < 2 else sys.argv[1].replace('\\', '/')
+    ws = r'A' if size < 3 else sys.argv[2].split('\t')
+    cp = r'\corpus\project\mddc\res\config.json' if size < 4 else sys.argv[3].replace('\\', '/')
+    retrieve_train_wav(wp, ws, cp)
     print('finish')
