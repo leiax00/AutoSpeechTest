@@ -5,7 +5,6 @@ import random
 
 from common.logger import logger
 from common.path_helper import get_cmder_path, get_wav_path, combine_path
-from common.ssh_util import ssh_exec
 from conf.config import corpus_conf
 from obj.audio_obj import AudioObj
 
@@ -90,3 +89,14 @@ class LoadSource:
             for i in index_l:
                 tmp.append(v[i])
             self.wav_mapping[k] = tmp
+
+    def load_cmder(self):
+        with open(self.cmd_path, 'r+', encoding='utf-8') as f:
+            return json.load(f).get('words')
+
+    def get_cmdstr_by_config(self):
+        tmp = []
+        cmders = self.load_cmder()
+        for item in cmders:
+            tmp.append(item.get('word'))
+        return tmp

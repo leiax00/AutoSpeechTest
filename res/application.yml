@@ -11,7 +11,7 @@ app:
     wav_path: \corpus\train\wavs  # 语料库路径
     wav_schema:  # 读取以什么开头的语音
       - A
-    retrieve_script: python3 retrieve_wav.py {0} {1} {2}  # 0:wav_path; 1:wav_schema; 2:cmd_path
+    retrieve_script: python3 /corpus/common/script-new/retrieve_wav.py {0} {1} {2}  # 0:wav_path; 1:wav_schema; 2:cmd_path
   controller:
     wav_count_one_cmder: 5  # 一条命令词的语料数量
     repeat_play_count: 1  # 一条语料的播放次数
