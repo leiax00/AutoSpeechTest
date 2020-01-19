@@ -17,7 +17,7 @@ def ssh_exec(cmd=None):
         logger.info('retrieve script:{0}'.format(cmd))
         res = c.exec_command(cmd)
         symbol = res[1].read().decode().strip('\r\n\t')
-        logger.error('retrieve wav, msg:{0}'.format(symbol))
+        logger.info('retrieve wav, msg:{0}'.format(symbol))
         if 'finish' not in symbol:
             return False
         return True
