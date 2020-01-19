@@ -32,8 +32,6 @@ app:
   mapping:  # 串口和版本的映射关系,serial和version两个数组一一对应
     product: mddc  # 产品名称
     serial:  # 串口号
-      - COM3
-      - COM5
+      - COM9
     version:  # 项目名_版本号
-      - mddc_191220
-      - mddc_200110
+      - mddc_200119

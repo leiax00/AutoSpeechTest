@@ -1,12 +1,11 @@
 # coding=utf-8
-import threading
 from time import sleep
 
 import serial
 
 from audio_identify.asr_queue import aq
 from audio_identify.emit.emiter import Receiver, observer
-from audio_identify.filter.log_filter import log_filter
+from audio_identify.filter.log_filter import LogFilter
 from common.logger import logger
 from common.time_util import format_time
 
@@ -37,7 +36,7 @@ class Collector(Receiver):
         while self.__start:
             try:
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
-                if line is not None and line != '' and not log_filter.need_filter(line):
+                if line is not None and line != '' and not LogFilter().need_filter(line):
                     self.tmp_data.append(line)
             except Exception as e:
                 logger.warn('com may may not read log, e:{0}'.format(e))

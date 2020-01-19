@@ -11,6 +11,3 @@ class LogFilter:
             if k in str:
                 return True
         return False
-
-
-log_filter = LogFilter()

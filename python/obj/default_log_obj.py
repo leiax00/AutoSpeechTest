@@ -22,7 +22,10 @@ class DefaultLogIn:
     def parse_log(self, r):
         for one_log in self.log_l:
             one_log = str(one_log)
-            content = one_log.split('decode result is ')[1]
+            items = one_log.split('decode result is ')
+            if len(items) < 2:
+                return
+            content = items[1]
             eles = content.split(' ')
             tmp = r.get(eles[0]) or DefaultLogItem()
             tmp.word = eles[0]
