@@ -142,6 +142,7 @@ class ACAApp(QtWidgets.QDialog):
         if conf_path is None:
             return
         corpus_conf.load_conf(conf_path)
+        self.__init_wav()
         logger.info('set software conf path: %s' % conf_path)
 
     def load_wav(self, wav_path=None):
@@ -160,17 +161,8 @@ class ACAApp(QtWidgets.QDialog):
         logger.info('%s start....' % name)
         self.threads[name] = Thread(name=name, target=self.service.player.play_all,
                                     args=(self.service.wav_mapping, corpus_conf.repeat_play_count), daemon=True)
-
-        def listen_play():
-            while self.threads[name].is_alive():
-                if self.start_btn.isEnabled():
-                    self.start_btn.setEnabled(False)
-                sleep(.5)
-            else:
-                self.start_btn.setEnabled(True)
-                logger.info('%s end....' % name)
-
-        self.threads[listen_name] = Thread(name=listen_name, target=listen_play, daemon=True)
+        self.threads[listen_name] = Thread(name=listen_name, target=self.listen_play, args=(name, self.start_btn),
+                                           daemon=True)
         self.threads[name].start()
         self.threads[listen_name].start()
 
@@ -184,9 +176,34 @@ class ACAApp(QtWidgets.QDialog):
         self.status_btn.setText('暂停测试' if self.service.player.is_play() else '继续测试')
 
     def output_wav_text(self):
-        logger.info('begin to output wav_text')
-        self.service.output_wav_text()
-        logger.info('output wav_text end....')
+        logger.info('begin to export wav_text...')
+        name = 'export_thread'
+        listen_name = 'listen_{0}'.format(name)
+
+        def export_wav():
+            self.monitor_label.setText("正在导出中，请勿操作界面！！")
+            self.service.output_wav_text()
+            self.monitor_label.setText(format(RealMonitor()))
+
+        self.threads[name] = Thread(name=name, target=export_wav, daemon=True)
+
+        self.threads[listen_name] = Thread(name=listen_name, target=self.listen_play, args=(name, self.out_wav),
+                                           daemon=True)
+        self.threads[name].start()
+        self.threads[listen_name].start()
+
+    def listen_play(self, name, o):
+        """
+        :param name: 线程名
+        :type o: QtWidgets.QPushButton
+        """
+        while self.threads[name].is_alive():
+            if o.isEnabled():
+                o.setEnabled(False)
+            sleep(.5)
+        else:
+            o.setEnabled(True)
+            logger.info('%s end....' % name)
 
     def look_result(self):
         logger.info('output_wav_text')

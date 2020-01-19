@@ -120,6 +120,7 @@ class AudioIdentify:
                                               corpus_conf.wav_count_one_cmder)
         with codecs.open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
             json.dump(self.wav_mapping, wf, cls=DefaultDecoder, indent=4, ensure_ascii=False)
+        logger.info('export end, file name:{0}'.format(file_name))
 
 
 if __name__ == '__main__':
