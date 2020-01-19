@@ -4,7 +4,7 @@ app:
     port: 22
     username: root
     password:  root
-  remote_base: \\192.168.1.8  # 远程服务器的路径
+  remote_base: \\192.168.1.8  # 远程服务器的路径，本地请配置卷标
   cmd_path: \corpus\project\mddc\res\config.json  # 命令词路径
   wav:
     load_mode: 1  # 1表示输入语料目录， 2表示输入wav.scp和text的目录

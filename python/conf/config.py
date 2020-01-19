@@ -9,36 +9,26 @@ from common.time_util import format_time, format_2
 class CorpusConf:
     def __init__(self):
         # 无上限为max, 无下限为min
-        self.svm_list = [
-            '0-10',
-            '10-max'
-        ]
-        self.likelihood_list = [
-            '0-10',
-            '10-max'
-        ]
-        self.confidence_list = [
-            '0-10',
-            '10-max'
-        ]
-        self.remote_host = r'192.168.1.8'
+        self.svm_list = []
+        self.likelihood_list = []
+        self.confidence_list = []
+        self.remote_host = r''
         self.remote_port = 22
-        self.remote_username = 'root'
-        self.remote_password = 'root'
+        self.remote_username = ''
+        self.remote_password = ''
 
-        self.remote_base = r'\\192.168.1.8'
-        self.cmd_path = r'\corpus\project\mddc\res\config.json'
+        self.remote_base = r''
+        self.cmd_path = r''
 
-        self.wav_path = r'\corpus\train\wavs'
-        self.wav_schema = ['A']
+        self.wav_path = r''
+        self.wav_schema = []
         self.wav_load_mode = 1
-        self.retrieve_script = 'python3 retrieve_wav.py {0} {1} {2}'.format(os.path.join(self.wav_path), '&'.join(self.wav_schema),
-                                                                            os.path.join(self.cmd_path))
+        self.retrieve_script = ''
 
-        self.wav_count_one_cmder = 2
+        self.wav_count_one_cmder = 1
         self.repeat_play_count = 1
         self.play_separator = 2  # 语音播报间隔
-        self.log_filter = ['agc handler']  # 过滤掉包含关键字的日志
+        self.log_filter = []  # 过滤掉包含关键字的日志
         self.soft_root = os.path.join(os.path.dirname(__file__), '..', '..')
         self.output_path = os.path.join(self.soft_root, 'output')
         self.temp_path = os.path.join(self.soft_root, 'temp')
