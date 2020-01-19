@@ -20,11 +20,14 @@ class Analyzer(threading.Thread):
 
     def analyze(self):
         while self.__start:
-            if not aq.empty():
-                obj = aq.pop()
-                self.write_log(obj)
-                if self.func is not None:
-                    self.func(obj)
+            try:
+                if not aq.empty():
+                    obj = aq.pop()
+                    self.write_log(obj)
+                    if self.func is not None:
+                        self.func(obj)
+            except Exception as e:
+                logger.error('error happen when analyzing log, err:{0}'.format(e))
 
     @staticmethod
     def write_log(obj):

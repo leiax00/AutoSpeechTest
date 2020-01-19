@@ -3,6 +3,8 @@ import os
 
 import yaml
 
+from common.time_util import format_time, format_2
+
 
 class CorpusConf:
     def __init__(self):
@@ -48,6 +50,8 @@ class CorpusConf:
         self.log_name_by_serial = {}
         self.product = ''
 
+        self.start_time = format_time(time_formatter=format_2)
+
     def load_conf(self, p=None):
         if p is None:
             p = os.path.join(self.soft_root, 'res', 'application.yml')
@@ -84,6 +88,10 @@ class CorpusConf:
         self.remote_password = conf['app']['remote']['password']
         print('success to load application.yml')
 
+
+cmd_mapping = {
+    
+}
 
 corpus_conf = CorpusConf()
 if __name__ == '__main__':

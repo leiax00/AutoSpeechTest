@@ -25,8 +25,8 @@ class Player:
         logger.info('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
         if isinstance(o, AudioObj):
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
-            logger.info('audio_duration:{0}'.format(audio_duration))
             self.player.play_wav(o.source)
+            logger.info('audio_duration:{0}'.format(audio_duration))
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
         sleep(corpus_conf.play_separator)

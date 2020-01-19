@@ -1,5 +1,6 @@
 # coding=utf-8
 import threading
+from time import sleep
 
 import serial
 
@@ -25,6 +26,7 @@ class Collector(Receiver):
             try:
                 self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=0.5)
             except Exception as e:
+                sleep(5)
                 logger.error('com connect exception, e:{0}'.format(e))
         self.listen()
 

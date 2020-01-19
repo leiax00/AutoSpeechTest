@@ -4,8 +4,8 @@ import traceback
 from time import sleep
 
 from common.logger import logger
-from common.time_util import format_time
-from conf.config import corpus_conf
+from common.time_util import format_time, parse_time, format_3, format_2
+from conf.config import corpus_conf, cmd_mapping
 from obj.audio_obj import AudioObj
 
 
@@ -72,7 +72,7 @@ class DefaultLogOut:
         return len(self.items) > 0
 
     def get_right_count(self):
-        o = self.items.get(self.cmd) or None
+        o = self.items.get(cmd_mapping.get(self.cmd) or self.cmd) or None
         if o is None:
             return 0
         return o.count
@@ -124,7 +124,8 @@ def write_default_log_2_csv(service):
                     continue
                 file_name = '{0}_{1}_{2}.csv'.format(corpus_conf.log_name_by_serial.get(com),
                                                      corpus_conf.wav_count_one_cmder,
-                                                     format_time(time_formatter="%y%m%d"))
+                                                     format_time(parse_time(corpus_conf.start_time, format_2), format_3)
+                                                     )
                 with open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
                     cmds_result = [v for _, v in dict(com_result_d).items()]
                     row_format = write_csv_header(cmds_result, wf)

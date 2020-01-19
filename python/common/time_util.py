@@ -6,16 +6,19 @@ one_second = 1 * 1000
 one_minute = 60 * one_second
 one_hour = 60 * one_minute
 one_day = 24 * one_hour
+format_1 = "%Y-%m-%d %H:%M:%S"
+format_2 = "%Y%m%d%H%M%S"
+format_3 = "%y%m%d"
 
 
-def parse_time(time_str, time_formatter="%Y-%m-%d %H:%M:%S"):
+def parse_time(time_str, time_formatter=format_1):
     """
     获取时间字符串的毫秒值
     """
     return time.mktime(time.strptime(time_str, time_formatter)) * 1000
 
 
-def format_time(time_long=None, time_formatter="%Y-%m-%d %H:%M:%S"):
+def format_time(time_long=None, time_formatter=format_1):
     """
     毫秒值时间格式化
     """

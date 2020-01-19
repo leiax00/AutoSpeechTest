@@ -1,5 +1,5 @@
 app:
-  remote:
+  remote:  # 配置用于语音检索，需要自行服务器上的 retrieve_wav.py 脚本
     host: 192.168.1.8
     port: 22
     username: root

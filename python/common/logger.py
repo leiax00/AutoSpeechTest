@@ -20,7 +20,7 @@ class SimpleLogger:
 
     def start_write(self):
         with open(os.path.join(corpus_conf.output_path,
-                               'tool_log_{0}.log'.format(format_time(time_formatter='%Y%m%d%H%M%S'))), 'a',
+                               'tool_log_{0}.log'.format(corpus_conf.start_time)), 'a',
                   encoding='utf-8') as wf:
             while True:
                 if not self.queue.empty():
