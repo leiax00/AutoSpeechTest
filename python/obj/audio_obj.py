@@ -18,8 +18,14 @@ class AudioObj:
     def __str__(self):
         return self.__dict__.__str__()
 
+    def __format__(self, format_spec):
+        if format_spec is not None and format_spec != '':
+            return format_spec.format(self)
+        return self.__str__()
+
 
 if __name__ == '__main__':
     obj = AudioObj().set_v('a', 'b', 'c')
     print(obj.__dict__)
+    print(format(obj))
     print(obj)
