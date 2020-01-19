@@ -44,6 +44,7 @@ class ACAApp(QtWidgets.QDialog):
             self.monitor_label.setText('wav检索中\n请检索完成再进行操作')
             ssh_exec()
             self.monitor_label.setText(format(RealMonitor()))
+
         self.threads['retrieve_wav'] = Thread(name='retrieve_wav', target=retrieve_wav, daemon=True)
         self.threads['retrieve_wav'].start()
 
@@ -140,6 +141,7 @@ class ACAApp(QtWidgets.QDialog):
         """
         if conf_path is None:
             return
+        corpus_conf.load_conf(conf_path)
         logger.info('set software conf path: %s' % conf_path)
 
     def load_wav(self, wav_path=None):
