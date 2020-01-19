@@ -5,7 +5,7 @@ import sys
 
 
 def retrieve_train_wav(wav_path, wav_schema, cmd_path):
-    print(wav_path, wav_schema, cmd_path)
+    print('retrieve params:', wav_path, wav_schema, cmd_path)
     result = {}
     cmd_l = get_cmdstr_by_config(cmd_path)
     dirs = os.listdir(wav_path)
@@ -53,7 +53,7 @@ def write_result_2_file(wav_path, content):
 if __name__ == '__main__':
     size = len(sys.argv)
     wp = r'\corpus\train\wavs' if size < 2 else sys.argv[1].replace('\\', '/')
-    ws = r'A' if size < 3 else sys.argv[2].split('\t')
+    ws = r'A' if size < 3 else sys.argv[2].split('&')
     cp = r'\corpus\project\mddc\res\config.json' if size < 4 else sys.argv[3].replace('\\', '/')
     retrieve_train_wav(wp, ws, cp)
     print('finish')

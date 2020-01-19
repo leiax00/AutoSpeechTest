@@ -1,6 +1,7 @@
 # coding=utf-8
 import paramiko
 
+from common.logger import logger
 from conf.config import corpus_conf
 
 
@@ -13,10 +14,11 @@ def ssh_exec(cmd=None):
                   password=corpus_conf.remote_password)
         if cmd is None:
             cmd = corpus_conf.retrieve_script
+        logger.info('retrieve script:{0}'.format(cmd))
         res = c.exec_command(cmd)
         symbol = res[1].read().decode().strip('\r\n\t')
         if 'finish' not in symbol:
-            print(symbol)
+            logger.error('failed to retrieve wav, msg:{0}'.format(symbol))
             return False
         return True
     finally:

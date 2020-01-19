@@ -32,8 +32,8 @@ class CorpusConf:
         self.wav_path = r'\corpus\train\wavs'
         self.wav_schema = ['A']
         self.wav_load_mode = 1
-        self.retrieve_script = 'python3 retrieve_wav.py {0} {1} {2}'.format(self.wav_path, '&'.join(self.wav_schema),
-                                                                            self.cmd_path)
+        self.retrieve_script = 'python3 retrieve_wav.py {0} {1} {2}'.format(os.path.join(self.wav_path), '&'.join(self.wav_schema),
+                                                                            os.path.join(self.cmd_path))
 
         self.wav_count_one_cmder = 2
         self.repeat_play_count = 1
@@ -68,8 +68,8 @@ class CorpusConf:
         self.wav_path = conf['app']['wav']['wav_path']
         self.wav_schema = conf['app']['wav']['wav_schema']
         self.wav_load_mode = int(conf['app']['wav']['load_mode'])
-        self.retrieve_script = conf['app']['wav']['retrieve_script'].format(self.wav_path, '&'.join(self.wav_schema),
-                                                                            self.cmd_path)
+        self.retrieve_script = conf['app']['wav']['retrieve_script'].format(self.wav_path.replace('\\', '/'), '&'.join(self.wav_schema),
+                                                                            self.cmd_path.replace('\\', '/'))
 
         self.wav_count_one_cmder = conf['app']['controller']['wav_count_one_cmder']
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
@@ -90,7 +90,7 @@ class CorpusConf:
 
 
 cmd_mapping = {
-    
+
 }
 
 corpus_conf = CorpusConf()
