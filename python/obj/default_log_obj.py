@@ -120,23 +120,23 @@ def write_default_log_2_csv(service):
     """
     :type service: audio_identify.identify.AudioIdentify
     """
-    try:
-        while service.can_write:
-            for com, com_result_d in result_map.items():
-                if len(com_result_d) == 0:
-                    continue
-                file_name = '{0}_{1}_{2}.csv'.format(corpus_conf.log_name_by_serial.get(com),
-                                                     corpus_conf.wav_count_one_cmder,
-                                                     format_time(parse_time(corpus_conf.start_time, format_2), format_3)
-                                                     )
+    while service.can_write:
+        for com, com_result_d in result_map.items():
+            if len(com_result_d) == 0:
+                continue
+            file_name = '{0}_{1}_{2}.csv'.format(corpus_conf.log_name_by_serial.get(com),
+                                                 corpus_conf.wav_count_one_cmder,
+                                                 format_time(parse_time(corpus_conf.start_time, format_2), format_3)
+                                                 )
+            try:
                 with open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
                     cmds_result = [v for _, v in dict(com_result_d).items()]
                     row_format = write_csv_header(cmds_result, wf)
                     for cmd_result in cmds_result:
                         write_one_cmd_log(cmd_result, row_format, wf)
-            sleep(10)
-    except Exception as e:
-        logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
+            except Exception as e:
+                logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
+        sleep(10)
 
 
 def write_csv_header(cmds_result, wf):
