@@ -52,25 +52,24 @@ class Player:
         @staticmethod
         def play_wav(wav_name):
             tmp_file_path = shutil.copy(wav_name, corpus_conf.temp_path)
-            try:
-                with wave.open(tmp_file_path, 'rb') as wf:
-                    max_len = 1024
-                    p = pyaudio.PyAudio()
-                    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                                    channels=wf.getnchannels(),
-                                    rate=wf.getframerate(),
-                                    output=True)
+            chunk = 1024
+            p = pyaudio.PyAudio()
+            wf = wave.open(tmp_file_path, 'rb')
+            stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                            channels=wf.getnchannels(),
+                            rate=wf.getframerate(),
+                            output=True)
 
-                    data = wf.readframes(max_len)
-                    while len(data) > 0:
-                        stream.write(data)
-                        data = wf.readframes(max_len)
+            data = wf.readframes(chunk)
+            while data != b'':
+                stream.write(data)
+                data = wf.readframes(chunk)
 
-                    stream.stop_stream()
-                    stream.close()
-                    p.terminate()
-            finally:
-                os.remove(tmp_file_path)
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+            wf.close()
+            os.remove(tmp_file_path)
 
     def set_play(self, bol):
         self.__is_play = bool(bol)

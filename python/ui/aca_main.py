@@ -139,7 +139,7 @@ class ACAApp(QtWidgets.QDialog):
         :param conf_path:
         :return:
         """
-        if conf_path is None:
+        if conf_path is None or conf_path.strip('\n\r\t') == '':
             return
         corpus_conf.load_conf(conf_path)
         self.__init_wav()

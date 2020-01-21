@@ -30,7 +30,7 @@ class LoadFile(QtWidgets.QWidget):
     def add_file(self):
         dialog = QtWidgets.QFileDialog()
         dialog.setFileMode(QtWidgets.QFileDialog.Directory)
-        f = dialog.getOpenFileName(self, 'open file', './', "All Files (*)")
+        f = dialog.getOpenFileName(self, 'open file', '../', "All Files (*)")
         self.line_edit.setText(f[0])
         if self.callback is not None:
             self.callback(f[0])
