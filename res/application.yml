@@ -30,8 +30,10 @@ app:
       - 0-10
       - 10-max
   mapping:  # 串口和版本的映射关系,serial和version两个数组一一对应
-    product: mddc  # 产品名称
+    product: matong  # 产品名称
     serial:  # 串口号
-      - COM9
+      - COM15
+      - COM14
     version:  # 项目名_版本号
-      - mddc_200119
+      - matong_191225
+      - matong_200120

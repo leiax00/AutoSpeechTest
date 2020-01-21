@@ -40,6 +40,8 @@ class Collector(Receiver):
                     self.tmp_data.append(line)
             except Exception as e:
                 logger.warn('com may may not read log, e:{0}'.format(e))
+            finally:
+                sleep(.2)
 
     def remove(self):
         self.__start = False
