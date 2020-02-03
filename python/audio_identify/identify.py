@@ -24,7 +24,7 @@ class AudioIdentify:
         self.com_devices = get_com_devices()
         self.collectors = []
         self.analyzers = []
-        self.wav_mapping = []
+        self.wav_mapping = {}
         self.w_thread = None
         self.can_write = True
         self.__init_default()
@@ -115,7 +115,15 @@ class AudioIdentify:
             logger.error('error happen: %s' % e)
 
     def output_wav_text(self):
-        self.wav_mapping = LoadSource().parse_wav(get_wav_path(), corpus_conf.wav_count_one_cmder)
+        new_wav_mapping = LoadSource().parse_wav(get_wav_path(), corpus_conf.wav_count_one_cmder)
+        for k, v in new_wav_mapping.items():
+            old_v = self.wav_mapping.get(k)
+            if old_v is not None:
+                if len(old_v) >= corpus_conf.wav_count_one_cmder:
+                    new_wav_mapping[k] = old_v[:corpus_conf.wav_count_one_cmder]
+                else:
+                    new_wav_mapping[k] = old_v + v[:(corpus_conf.wav_count_one_cmder - len(old_v))]
+        self.wav_mapping = new_wav_mapping
         file_name = '{0}_{1}_{2}.json'.format(corpus_conf.product, format_time(time_formatter="%y%m%d"),
                                               corpus_conf.wav_count_one_cmder)
         with codecs.open(os.path.join(corpus_conf.output_path, file_name), 'w+', encoding='utf-8') as wf:
