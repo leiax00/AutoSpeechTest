@@ -19,7 +19,7 @@ def parse_time(time_str, time_formatter=format_1):
     return time.mktime(time.strptime(time_str, time_formatter)) * 1000
 
 
-def format_time(time_long=None, time_formatter=format_4):
+def format_time_4_log(time_long=None, time_formatter=format_4):
     """
     毫秒值时间格式化
     """
@@ -27,6 +27,14 @@ def format_time(time_long=None, time_formatter=format_4):
         return time.strftime(format_1, time.localtime(time_long / 1000)) + '.' + str(int(time_long % 1000))
     else:
         return datetime.datetime.now().strftime(time_formatter)
+
+
+def format_time(time_long=None, time_formatter=format_1):
+    """
+    毫秒值时间格式化
+    """
+    t = time.localtime() if time_long is None else time.localtime(time_long / 1000)
+    return time.strftime(time_formatter, t)
 
 
 def cur_time_str(time_formatter="%Y-%m-%d %H:%M:%S"):

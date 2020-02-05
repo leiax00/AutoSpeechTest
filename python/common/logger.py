@@ -3,7 +3,7 @@ import os
 from queue import Queue
 from threading import Thread
 
-from common.time_util import format_time
+from common.time_util import format_time_4_log
 from conf.config import corpus_conf
 
 
@@ -36,19 +36,19 @@ class SimpleLogger:
                         tmp_log, count = '', 0
 
     def info(self, msg):
-        info = '[%s**%s] %s' % (format_time(), self.level_info, msg)
+        info = '[%s**%s] %s' % (format_time_4_log(), self.level_info, msg)
         self.queue.put(info)
 
     def warn(self, msg):
-        info = '[%s**%s] %s' % (format_time(), self.level_warn, msg)
+        info = '[%s**%s] %s' % (format_time_4_log(), self.level_warn, msg)
         self.queue.put(info)
 
     def error(self, msg):
-        info = '[%s**%s] %s' % (format_time(), self.level_error, msg)
+        info = '[%s**%s] %s' % (format_time_4_log(), self.level_error, msg)
         self.queue.put(info)
 
     def debug(self, msg):
-        info = '[%s**%s] %s' % (format_time(), self.level_debug, msg)
+        info = '[%s**%s] %s' % (format_time_4_log(), self.level_debug, msg)
         self.queue.put(info)
 
 
