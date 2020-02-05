@@ -150,6 +150,7 @@ class ACAApp(QtWidgets.QDialog):
             return
         logger.info('set wav path: %s' % wav_path)
         self.service.wav_mapping = LoadSource().parse_wav(wav_path, corpus_conf.wav_count_one_cmder)
+        self.start_btn.setEnabled(True)
 
     def select_coms(self, com_l):
         logger.info('set com list: %s' % com_l)
@@ -159,8 +160,7 @@ class ACAApp(QtWidgets.QDialog):
         name = 'play_thread'
         listen_name = 'listen_{0}'.format(name)
         logger.info('%s start....' % name)
-        self.threads[name] = Thread(name=name, target=self.service.player.play_all,
-                                    args=(self.service.wav_mapping, corpus_conf.repeat_play_count), daemon=True)
+        self.threads[name] = Thread(name=name, target=self.service.process, daemon=True)
         self.threads[listen_name] = Thread(name=listen_name, target=self.listen_play, args=(name, self.start_btn),
                                            daemon=True)
         self.threads[name].start()

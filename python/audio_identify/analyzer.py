@@ -1,7 +1,6 @@
 # coding=utf-8
 import os
 import threading
-from time import sleep
 
 from audio_identify.asr_queue import aq
 from common.logger import logger
@@ -29,8 +28,6 @@ class Analyzer(threading.Thread):
                         self.func(obj)
             except Exception as e:
                 logger.error('error happen when analyzing log, err:{0}'.format(e))
-            finally:
-                sleep(.2)
 
     @staticmethod
     def write_log(obj):

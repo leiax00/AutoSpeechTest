@@ -1,4 +1,5 @@
 # coding=utf-8
+import threading
 from time import sleep
 
 import serial
@@ -19,6 +20,7 @@ class Collector(Receiver):
         self.serial_com = None
         self.tmp_data = [format_time(), self.com_device]
         self.setDaemon(True)
+        self.lock = threading.Lock()
 
     def run(self):
         while self.serial_com is None:
@@ -37,11 +39,10 @@ class Collector(Receiver):
             try:
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
                 if line is not None and line != '' and not LogFilter().need_filter(line):
-                    self.tmp_data.append(line)
+                    with self.lock:
+                        self.tmp_data.append(line)
             except Exception as e:
-                logger.warn('com may may not read log, e:{0}'.format(e))
-            finally:
-                sleep(.2)
+                logger.warn('com: {0} may may not read log, e:{1}'.format(self.com_device, e))
 
     def remove(self):
         self.__start = False
@@ -49,9 +50,10 @@ class Collector(Receiver):
         logger.info('success to close thread, com:{0}'.format(self.com_device))
 
     def on_notify(self, *o):
-        self.tmp_data.insert(2, o[0])
-        aq.send(self.tmp_data)
-        self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题
+        with self.lock:
+            self.tmp_data.insert(2, o[0])
+            aq.send(self.tmp_data)
+            self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题
 
 
 if __name__ == '__main__':

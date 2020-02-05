@@ -27,7 +27,6 @@ class AudioIdentify:
         self.wav_mapping = {}
         self.w_thread = None
         self.can_write = True
-        self.__init_default()
 
     def __init_default(self):
         self.register_collector_by_com()
@@ -105,10 +104,10 @@ class AudioIdentify:
         for analyzer in self.analyzers:
             analyzer.remove()
         self.can_write = False
-        logger.info('test finish!!!!!!')
 
     def process(self):
         try:
+            self.__init_default()
             self.player.play_all(self.wav_mapping, corpus_conf.repeat_play_count)
             self.release()
         except Exception as e:
