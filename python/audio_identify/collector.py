@@ -38,10 +38,11 @@ class Collector(Receiver):
         while self.__start:
             try:
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
-                logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
-                if line is not None and line != '' and not LogFilter().need_filter(line):
-                    with self.lock:
-                        self.tmp_data.append(line)
+                if line is not None and line != '':
+                    logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
+                    if not LogFilter().need_filter(line):
+                        with self.lock:
+                            self.tmp_data.append(line)
             except Exception as e:
                 logger.warn('com: {0} may may not read log, e:{1}'.format(self.com_device, e))
             finally:

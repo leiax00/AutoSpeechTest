@@ -9,6 +9,7 @@ one_day = 24 * one_hour
 format_1 = "%Y-%m-%d %H:%M:%S"
 format_2 = "%Y%m%d%H%M%S"
 format_3 = "%y%m%d"
+format_4 = "%Y-%m-%d %H:%M:%S.%f"
 
 
 def parse_time(time_str, time_formatter=format_1):
@@ -18,12 +19,14 @@ def parse_time(time_str, time_formatter=format_1):
     return time.mktime(time.strptime(time_str, time_formatter)) * 1000
 
 
-def format_time(time_long=None, time_formatter=format_1):
+def format_time(time_long=None, time_formatter=format_4):
     """
     毫秒值时间格式化
     """
-    t = time.localtime() if time_long is None else time.localtime(time_long / 1000)
-    return time.strftime(time_formatter, t)
+    if time_long is not None:
+        return time.strftime(format_1, time.localtime(time_long / 1000)) + '.' + str(int(time_long % 1000))
+    else:
+        return datetime.datetime.now().strftime(time_formatter)
 
 
 def cur_time_str(time_formatter="%Y-%m-%d %H:%M:%S"):
