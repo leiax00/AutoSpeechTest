@@ -4,8 +4,10 @@ import shutil
 import wave
 from time import sleep
 
+import numpy as np
 import pyaudio
 from pydub import AudioSegment
+from scipy.io import wavfile
 
 from audio_identify.emit.emiter import observer
 from common.logger import logger
@@ -49,9 +51,11 @@ class Player:
             self.play_batch(wav_list, cmd_str, repeat_play_count)
 
     class _Player:
-        @staticmethod
-        def play_wav(wav_name):
-            tmp_file_path = shutil.copy(wav_name, corpus_conf.temp_path)
+        def play_wav(self, wav_name, voice_same=False):
+            if voice_same:
+                self.deal_voice(wav_name)
+            else:
+                tmp_file_path = shutil.copy(wav_name, corpus_conf.temp_path)
             chunk = 1024
             p = pyaudio.PyAudio()
             wf = wave.open(tmp_file_path, 'rb')
@@ -70,6 +74,13 @@ class Player:
             p.terminate()
             wf.close()
             os.remove(tmp_file_path)
+
+        @staticmethod
+        def deal_voice(filename):
+            dst_f = os.path.join(corpus_conf.temp_path, os.path.basename(filename))
+            wav_l = list(wavfile.read(filename))
+            normal_waves = np.array(wav_l[1] / np.max(wav_l[1]) * 32768, dtype=np.int16)
+            wavfile.write(dst_f, wav_l[0], normal_waves)
 
     def set_play(self, bol):
         self.__is_play = bool(bol)
