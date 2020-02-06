@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 
 
 class AudioObj:
@@ -26,6 +27,7 @@ class AudioObj:
 
 if __name__ == '__main__':
     obj = AudioObj().set_v('a', 'b', 'c')
-    print(obj.__dict__)
-    print(format(obj))
-    print(obj)
+    s = obj.__str__()
+    print(s, type(s))
+    new_o = json.loads(json.dumps(eval(s)), object_hook=AudioObj)
+    print(new_o.content)

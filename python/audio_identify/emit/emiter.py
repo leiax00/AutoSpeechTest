@@ -11,7 +11,15 @@ class Receiver(threading.Thread):
         observer.register(self)
 
     @abstractmethod
-    def on_notify(self):
+    def on_notify(self, *o):
+        raise NotImplementedError
+
+    @abstractmethod
+    def notify_start(self, *o):
+        raise NotImplementedError
+
+    @abstractmethod
+    def notify_end(self, *o):
         raise NotImplementedError
 
 
@@ -29,9 +37,17 @@ class Observer:
         if issubclass(type(o), Receiver):
             self.receivers.remove(o)
 
-    def notify(self, *o):
+    def on_notify(self, *o):
         for receiver in self.receivers:
             receiver.on_notify(*o)
+
+    def notify_start(self, *o):
+        for receiver in self.receivers:
+            receiver.notify_start(*o)
+
+    def notify_end(self, *o):
+        for receiver in self.receivers:
+            receiver.notify_end(*o)
 
 
 observer = Observer()
@@ -47,4 +63,4 @@ if __name__ == '__main__':
 
 
     observer.register(As())
-    observer.notify()
+    observer.on_notify()

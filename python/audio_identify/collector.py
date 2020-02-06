@@ -6,10 +6,15 @@ import serial
 
 from audio_identify.asr_queue import aq
 from audio_identify.emit.emiter import Receiver, observer
-from audio_identify.filter.log_filter import LogFilter
+from common.content import cmd_dict
 from common.logger import logger
 from common.time_util import format_time
 from conf.config import corpus_conf
+
+start_symbol = 'start aca'
+end_symbol = 'end aca'
+enter_symbol = '> '
+linux_cmd_symbol = '/bin/sh'
 
 
 class Collector(Receiver):
@@ -18,7 +23,7 @@ class Collector(Receiver):
         self.__start = True
         self.com_device = com_device
         self.thread_name = '{0}:{1}'.format('collector', self.com_device)
-        self.serial_com = None
+        self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=0.5)
         self.tmp_data = [format_time(), self.com_device]
         self.setDaemon(True)
         self.lock = threading.Lock()
@@ -39,8 +44,17 @@ class Collector(Receiver):
         while self.__start:
             try:
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
-                if line is not None and line != '':
-                    logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
+                if line is None or line == '' or line == enter_symbol or linux_cmd_symbol in line or line == '# ':
+                    continue
+                logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
+                if start_symbol in line:
+                    cmd_str = line.split(':')[1]
+                    self.tmp_data = [format_time(), self.com_device, cmd_dict.get(cmd_str)]
+                    continue
+                elif end_symbol in line:
+                    aq.send(self.tmp_data)
+                    continue
+                else:
                     if not corpus_conf.log_filter.need_filter(line):
                         with self.lock:
                             self.tmp_data.append(line)
@@ -55,22 +69,15 @@ class Collector(Receiver):
         logger.info('success to close thread, com:{0}'.format(self.com_device))
 
     def on_notify(self, *o):
-        with self.lock:
-            self.tmp_data.insert(2, o[0])
-            aq.send(self.tmp_data)
-            self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题
-    # def on_notify(self, *o):
-    #     self.tmp_data = [format_time(), self.com_device, o[0]]
-    #     lines = self.serial_com.readlines()
-    #     for line in lines:
-    #         line = line.decode(encoding='utf-8').strip('\r\n\t')
-    #         if line is not None and line != '':
-    #             if not LogFilter().need_filter(line):
-    #                 self.tmp_data.append(line)
-    #     logger.info('push queue:{0}'.format(self.tmp_data))
-    #     aq.send(self.tmp_data)
+        pass
+
+    def notify_start(self, *o):
+        self.serial_com.write(bytes('{0}:{1}\n'.format(start_symbol, o[0]), encoding='utf-8'))
+
+    def notify_end(self, *o):
+        self.serial_com.write(bytes('{0}:{1}\n'.format(end_symbol, o[0]), encoding='utf-8'))
 
 
 if __name__ == '__main__':
     c = Collector('COM5')
-    observer.notify('aa')
+    observer.on_notify('aa')
