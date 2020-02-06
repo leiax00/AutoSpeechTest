@@ -3,6 +3,7 @@ import os
 
 import yaml
 
+from audio_identify.filter.log_filter import LogFilter
 from common.time_util import format_time, format_2
 
 
@@ -28,7 +29,7 @@ class CorpusConf:
         self.wav_count_one_cmder = 1
         self.repeat_play_count = 1
         self.play_separator = 2  # 语音播报间隔
-        self.log_filter = []  # 过滤掉包含关键字的日志
+        self.log_filter = LogFilter()  # 过滤掉包含关键字的日志
         self.soft_root = os.path.join(os.path.dirname(__file__), '..', '..')
         self.output_path = os.path.join(self.soft_root, 'output')
         self.temp_path = os.path.join(self.soft_root, 'temp')
@@ -65,7 +66,7 @@ class CorpusConf:
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
         self.play_separator = conf['app']['controller']['play_separator']
 
-        self.log_filter = conf['app']['log']['log_filter']
+        self.log_filter = LogFilter(conf['app']['log']['log_filter'])
         self.product = conf['app']['mapping']['product']
         serials = conf['app']['mapping']['serial']
         versions = conf['app']['mapping']['version']

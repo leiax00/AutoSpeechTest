@@ -9,6 +9,7 @@ from audio_identify.emit.emiter import Receiver, observer
 from audio_identify.filter.log_filter import LogFilter
 from common.logger import logger
 from common.time_util import format_time
+from conf.config import corpus_conf
 
 
 class Collector(Receiver):
@@ -40,7 +41,7 @@ class Collector(Receiver):
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
                 if line is not None and line != '':
                     logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
-                    if not LogFilter().need_filter(line):
+                    if not corpus_conf.log_filter.need_filter(line):
                         with self.lock:
                             self.tmp_data.append(line)
             except Exception as e:
@@ -58,6 +59,16 @@ class Collector(Receiver):
             self.tmp_data.insert(2, o[0])
             aq.send(self.tmp_data)
             self.tmp_data = [format_time(), self.com_device]  # 可能存在多线程问题
+    # def on_notify(self, *o):
+    #     self.tmp_data = [format_time(), self.com_device, o[0]]
+    #     lines = self.serial_com.readlines()
+    #     for line in lines:
+    #         line = line.decode(encoding='utf-8').strip('\r\n\t')
+    #         if line is not None and line != '':
+    #             if not LogFilter().need_filter(line):
+    #                 self.tmp_data.append(line)
+    #     logger.info('push queue:{0}'.format(self.tmp_data))
+    #     aq.send(self.tmp_data)
 
 
 if __name__ == '__main__':

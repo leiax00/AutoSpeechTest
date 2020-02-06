@@ -28,11 +28,12 @@ class Player:
         if isinstance(o, AudioObj):
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
             self.player.play_wav(o.source)
-            logger.info('audio_duration:{0}'.format(audio_duration))
+            logger.info('start to collect log and audio_duration:{0}'.format(audio_duration))
+            sleep(corpus_conf.play_separator)
+            observer.notify(o)
+            logger.info('play cmd:{0} finish...'.format(cmd_str))
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
-        sleep(corpus_conf.play_separator)
-        observer.notify(o)
 
     def play_batch(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
         while repeat_play_count > 0:
