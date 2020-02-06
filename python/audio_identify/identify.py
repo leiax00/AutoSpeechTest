@@ -3,6 +3,7 @@ import codecs
 import json
 import os
 from threading import Thread
+from time import sleep
 
 from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
@@ -35,7 +36,7 @@ class AudioIdentify:
         self.start_write_result_thread()
 
     def start_write_result_thread(self, f=write_default_log_2_csv):
-        self.w_thread = Thread(target=f, args=(self,), daemon=True)
+        self.w_thread = Thread(target=f, args=(self,))  # 写线程不能启动为精灵线程
         self.w_thread.start()
 
     def register_collector(self, c):

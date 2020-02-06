@@ -120,7 +120,10 @@ def write_default_log_2_csv(service):
     """
     :type service: audio_identify.identify.AudioIdentify
     """
-    while service.can_write:
+    count = 0
+    while count == 0:
+        if not service.can_write:  # 保证在停止后再进行一次写入
+            count += 1
         for com, com_result_d in result_map.items():
             if len(com_result_d) == 0:
                 continue
