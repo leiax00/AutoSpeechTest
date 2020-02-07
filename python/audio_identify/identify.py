@@ -3,7 +3,6 @@ import codecs
 import json
 import os
 from threading import Thread
-from time import sleep
 
 from audio_identify.analyzer import Analyzer
 from audio_identify.collector import Collector
@@ -109,7 +108,13 @@ class AudioIdentify:
 
     def process(self):
         try:
-            self.player.play_all(self.wav_mapping, corpus_conf.repeat_play_count)
+            if corpus_conf.play_mode == 3:
+                count = corpus_conf.repeat_play_count
+                while count > 0:
+                    count -= 1
+                    self.player.play_all(self.wav_mapping, 1)
+            else:
+                self.player.play_all(self.wav_mapping, corpus_conf.repeat_play_count)
         except Exception as e:
             logger.error('error happen: %s' % e)
 

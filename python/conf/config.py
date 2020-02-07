@@ -27,6 +27,7 @@ class CorpusConf:
         self.retrieve_script = ''
 
         self.wav_count_one_cmder = 1
+        self.play_mode = 1
         self.repeat_play_count = 1
         self.play_separator = 2  # 语音播报间隔
         self.log_filter = LogFilter()  # 过滤掉包含关键字的日志
@@ -64,6 +65,7 @@ class CorpusConf:
 
         self.wav_count_one_cmder = conf['app']['controller']['wav_count_one_cmder']
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
+        self.play_mode = conf['app']['controller']['play_mode']
         self.play_separator = conf['app']['controller']['play_separator']
 
         self.log_filter = LogFilter(conf['app']['log']['log_filter'])

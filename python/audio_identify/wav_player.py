@@ -40,11 +40,18 @@ class Player:
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
 
-    def play_batch(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
+    def play_batch_mode1(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
         while repeat_play_count > 0:
             for o in o_list:
                 self.play(o, cmd_str)
             repeat_play_count -= 1
+
+    def play_batch_mode2(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
+        for o in o_list:
+            count = repeat_play_count
+            while count > 0:
+                self.play(o, cmd_str)
+                count -= 1
 
     def play_all(self, o_dict, repeat_play_count):
         """
@@ -54,7 +61,12 @@ class Player:
         :return:
         """
         for cmd_str, wav_list in o_dict.items():
-            self.play_batch(wav_list, cmd_str, repeat_play_count)
+            if corpus_conf.play_mode == 1:
+                self.play_batch_mode1(wav_list, cmd_str, repeat_play_count)
+            elif corpus_conf.play_mode == 2:
+                self.play_batch_mode2(wav_list, cmd_str, repeat_play_count)
+            elif corpus_conf.play_mode == 3:
+                self.play_batch_mode1(wav_list, cmd_str, repeat_play_count)  # repeat_play_count === 1
 
     class _Player:
         def play_wav(self, wav_name, voice_same=False):
