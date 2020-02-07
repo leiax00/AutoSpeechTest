@@ -133,6 +133,9 @@ class ACAApp(QtWidgets.QDialog):
         self.setWindowIcon(QIcon(''))
         self.setGeometry(200, 200, 600, 200)  # margin-x, margin-y, length, width
 
+    def closeEvent(self, event):
+        self.service.release()
+
     def load_conf(self, conf_path=None):
         """
         todo: 待实现

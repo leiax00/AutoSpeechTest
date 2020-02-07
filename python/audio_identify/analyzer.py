@@ -14,7 +14,6 @@ class Analyzer(threading.Thread):
         super(Analyzer, self).__init__()
         self.__start = True
         self.func = func
-        self.setDaemon(True)
 
     def run(self):
         self.analyze()

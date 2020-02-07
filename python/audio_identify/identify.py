@@ -110,7 +110,6 @@ class AudioIdentify:
     def process(self):
         try:
             self.player.play_all(self.wav_mapping, corpus_conf.repeat_play_count)
-            self.release()
         except Exception as e:
             logger.error('error happen: %s' % e)
 

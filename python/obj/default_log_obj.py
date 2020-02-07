@@ -120,10 +120,7 @@ def write_default_log_2_csv(service):
     """
     :type service: audio_identify.identify.AudioIdentify
     """
-    count = 0
-    while count == 0:
-        if not service.can_write:  # 保证在停止后再进行一次写入
-            count += 1
+    while service.can_write:
         for com, com_result_d in result_map.items():
             if len(com_result_d) == 0:
                 continue
@@ -139,7 +136,7 @@ def write_default_log_2_csv(service):
                         write_one_cmd_log(cmd_result, row_format, wf)
             except Exception as e:
                 logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
-        sleep(30)
+        sleep(10)
 
 
 def write_csv_header(cmds_result, wf):

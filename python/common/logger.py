@@ -25,15 +25,14 @@ class SimpleLogger:
                   encoding='utf-8') as wf:
             while True:
                 if not self.queue.empty():
-                    count += 1
                     info = self.queue.get()
                     if 'pick bug' not in info:
                         print(info)
-                    tmp_log += '{0}\n'.format(info)
+                    wf.write('{0}\n'.format(info))
+                    count += 1
                     if count == 100:
-                        wf.write(tmp_log)
                         wf.flush()
-                        tmp_log, count = '', 0
+                        count = 0
 
     def info(self, msg):
         info = '[%s**%s] %s' % (format_time_4_log(), self.level_info, msg)

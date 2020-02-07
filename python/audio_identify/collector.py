@@ -15,6 +15,7 @@ start_symbol = 'start aca'
 end_symbol = 'end aca'
 enter_symbol = '> '
 linux_cmd_symbol = '/bin/sh'
+linux_newline_symbol = '# '
 
 
 class Collector(Receiver):
@@ -25,7 +26,6 @@ class Collector(Receiver):
         self.thread_name = '{0}:{1}'.format('collector', self.com_device)
         self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=0.5)
         self.tmp_data = [format_time(), self.com_device]
-        self.setDaemon(True)
         self.lock = threading.Lock()
 
     def run(self):
@@ -44,7 +44,8 @@ class Collector(Receiver):
         while self.__start:
             try:
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
-                if line is None or line == '' or line == enter_symbol or linux_cmd_symbol in line or line == '# ':
+                if line is None or line == '' or line == enter_symbol \
+                        or linux_cmd_symbol in line or line == linux_newline_symbol:
                     continue
                 logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
                 if start_symbol in line:
