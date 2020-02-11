@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import re
 import traceback
 from time import sleep
 
@@ -22,21 +23,20 @@ class DefaultLogIn:
     def parse_log(self, r):
         for one_log in self.log_l:
             one_log = str(one_log)
-            items = one_log.split('decode result is ')
-            if len(items) < 2:
-                return
-            content = items[1]
-            eles = content.split(' ')
-            tmp = r.get(eles[0]) or DefaultLogItem()
-            tmp.word = eles[0]
-            i = self.get_interval_index(eles[1].split(':')[0], corpus_conf.confidence_list)
-            tmp.confidence[i] = tmp.confidence[i] + 1
-            i = self.get_interval_index(eles[2].split(':')[0], corpus_conf.likelihood_list)
-            tmp.likelihood[i] = tmp.likelihood[i] + 1
-            i = self.get_interval_index(eles[2].split(':')[0], corpus_conf.svm_list)
-            tmp.svm[i] = tmp.svm[i] + 1
-            tmp.count += 1
-            r[tmp.word] = tmp
+            info = re.match(r'.*decode result is ([^ ]*) ([\d.]*):[^ ]* ([\d.]*):[^ ]* ([\d.]*):[^ ]*', one_log)
+            if info is not None:
+                tmp = r.get(info.group(1)) or DefaultLogItem()
+                tmp.word = info.group(1)
+                i = self.get_interval_index(info.group(2), corpus_conf.confidence_list)
+                tmp.confidence[i] = tmp.confidence[i] + 1
+                i = self.get_interval_index(info.group(3), corpus_conf.likelihood_list)
+                tmp.likelihood[i] = tmp.likelihood[i] + 1
+                i = self.get_interval_index(info.group(4), corpus_conf.svm_list)
+                tmp.svm[i] = tmp.svm[i] + 1
+                tmp.count += 1
+                r[tmp.word] = tmp
+            else:
+                logger.error('invalid log:{0}'.format(one_log))
 
     @staticmethod
     def get_interval_index(v, interval_l):

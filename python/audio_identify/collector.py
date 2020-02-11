@@ -1,12 +1,12 @@
 # coding=utf-8
 import threading
+import time
 from time import sleep
 
 import serial
 
 from audio_identify.asr_queue import aq
 from audio_identify.emit.emiter import Receiver, observer
-from common.content import cmd_dict
 from common.logger import logger
 from common.time_util import format_time
 from conf.config import corpus_conf
@@ -24,14 +24,14 @@ class Collector(Receiver):
         self.__start = True
         self.com_device = com_device
         self.thread_name = '{0}:{1}'.format('collector', self.com_device)
-        self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=0.5)
+        self.serial_com = None
         self.tmp_data = [format_time(), self.com_device]
         self.lock = threading.Lock()
 
     def run(self):
         while self.serial_com is None:
             try:
-                self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=0.5)
+                self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=.01)
             except Exception as e:
                 sleep(5)
                 logger.error('com connect exception, e:{0}'.format(e))
@@ -44,21 +44,12 @@ class Collector(Receiver):
         while self.__start:
             try:
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
-                if line is None or line == '' or line == enter_symbol \
-                        or linux_cmd_symbol in line or line == linux_newline_symbol:
+                if line is None or line == '':
                     continue
                 logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
-                if start_symbol in line:
-                    cmd_str = line.split(':')[1]
-                    self.tmp_data = [format_time(), self.com_device, cmd_dict.get(cmd_str)]
-                    continue
-                elif end_symbol in line:
-                    aq.send(self.tmp_data)
-                    continue
-                else:
-                    if not corpus_conf.log_filter.need_filter(line):
-                        with self.lock:
-                            self.tmp_data.append(line)
+                if not corpus_conf.log_filter.need_filter(line):
+                    with self.lock:
+                        self.tmp_data.append(line)
             except Exception as e:
                 logger.warn('com: {0} may may not read log, e:{1}'.format(self.com_device, e))
             finally:
@@ -70,13 +61,16 @@ class Collector(Receiver):
         logger.info('success to close thread, com:{0}'.format(self.com_device))
 
     def on_notify(self, *o):
-        pass
+        with self.lock:
+            self.tmp_data.insert(2, o[0])
+            aq.send(self.tmp_data)
+            self.tmp_data = [format_time(), self.com_device]
 
     def notify_start(self, *o):
-        self.serial_com.write(bytes('{0}:{1}\n'.format(start_symbol, o[0]), encoding='utf-8'))
+        pass
 
     def notify_end(self, *o):
-        self.serial_com.write(bytes('{0}:{1}\n'.format(end_symbol, o[0]), encoding='utf-8'))
+        pass
 
 
 if __name__ == '__main__':

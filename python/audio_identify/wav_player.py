@@ -10,7 +10,6 @@ from pydub import AudioSegment
 from scipy.io import wavfile
 
 from audio_identify.emit.emiter import observer
-from common.content import cmd_dict
 from common.logger import logger
 from conf.config import corpus_conf
 from obj.audio_obj import AudioObj
@@ -28,14 +27,11 @@ class Player:
 
         logger.info('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
         if isinstance(o, AudioObj):
-            cmd_serial = 'cmd{0}'.format(self.count)
-            cmd_dict[cmd_serial], self.count = o, self.count + 1
-            observer.notify_start(cmd_serial)
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
             self.player.play_wav(o.source)
             logger.info('start to collect log and audio_duration:{0}'.format(audio_duration))
             sleep(corpus_conf.play_separator)
-            observer.notify_end(cmd_serial)
+            observer.on_notify(o)
             logger.info('play cmd:{0} finish...'.format(cmd_str))
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))
