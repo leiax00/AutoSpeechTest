@@ -137,6 +137,8 @@ def write_default_log_2_csv(service):
             except Exception as e:
                 logger.error('Failed to write test result, err: %s, %s' % (e, traceback.format_exc()))
         sleep(10)
+    else:
+        logger.info('write csv thread finish...')
 
 
 def write_csv_header(cmds_result, wf):

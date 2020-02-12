@@ -32,21 +32,23 @@ class Collector(Receiver):
         while self.serial_com is None:
             try:
                 self.serial_com = serial.Serial(port=self.com_device, baudrate=115200, timeout=.01)
+                logger.info('com connect success, com:{0}'.format(self.com_device))
             except Exception as e:
                 sleep(5)
                 logger.error('com connect exception, e:{0}'.format(e))
         self.listen()
 
     def listen(self):
-        if not self.serial_com.isOpen():
-            self.serial_com.open()
-        logger.info('com connect success, com:{0}'.format(self.com_device))
+        ave_t = []
         while self.__start:
             try:
+                start = int(round(time.time() * 1000))
                 line = self.serial_com.readline().decode(encoding='utf-8').strip('\r\n\t')
                 if line is None or line == '':
                     continue
-                logger.info('com:{0} receive info: {1}'.format(self.com_device, line))
+                ave_t.append(int(round(time.time() * 1000)) - start)
+                logger.info(
+                    'com:{0} receive info: {1}, cost:{2}'.format(self.com_device, line, int(sum(ave_t) / len(ave_t))))
                 if not corpus_conf.log_filter.need_filter(line):
                     with self.lock:
                         self.tmp_data.append(line)
@@ -54,6 +56,8 @@ class Collector(Receiver):
                 logger.warn('com: {0} may may not read log, e:{1}'.format(self.com_device, e))
             finally:
                 sleep(.001)  # 取消线程占用
+        else:
+            logger.info('com:{0} collector thread finish....'.format(self.com_device))
 
     def remove(self):
         self.__start = False

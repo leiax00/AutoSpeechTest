@@ -30,6 +30,8 @@ class Analyzer(threading.Thread):
                 logger.error('error happen when analyzing log, err:{0}'.format(e))
             finally:
                 sleep(.001)  # 取消线程占用
+        else:
+            logger.info('analyzer thread finish....')
 
     @staticmethod
     def write_log(obj):

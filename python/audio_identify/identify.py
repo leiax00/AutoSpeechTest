@@ -136,5 +136,8 @@ class AudioIdentify:
 
 
 if __name__ == '__main__':
+    wav_path = r'D:\code\myTools\python\lehua_matong_tts_10.json'
+    corpus_conf.load_conf()
     ai = AudioIdentify()
+    ai.wav_mapping = LoadSource().parse_wav(wav_path, corpus_conf.wav_count_one_cmder)
     ai.process()

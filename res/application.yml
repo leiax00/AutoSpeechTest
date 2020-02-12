@@ -16,7 +16,7 @@ app:
     wav_count_one_cmder: 5  # 一条命令词的语料数量
     play_mode: 1  # 1: 单条命令词所有语料读完循环；2：单条命令词单条语音读完循环；3：所有命令词所有语料读完循环；
     repeat_play_count: 1  # 一条语料的播放次数
-    play_separator: 1  # 每次播放的时间间隔，单位: 秒
+    play_separator: 1.5  # 每次播放的时间间隔，单位: 秒
   log:
     log_filter:  # 日志的过滤关键字，出现在以下列表中关键字的日志，均不会被采集
       - agc handler
