@@ -1,6 +1,7 @@
 # coding=utf-8
 import threading
 from abc import abstractmethod, ABCMeta
+from time import sleep
 
 
 class Receiver(threading.Thread):
@@ -26,6 +27,7 @@ class Receiver(threading.Thread):
 class Observer:
     def __init__(self):
         self.receivers = []
+        self.threads = []
 
     def register(self, o):
         if issubclass(type(o), Receiver):
@@ -47,7 +49,20 @@ class Observer:
 
     def notify_end(self, *o):
         for receiver in self.receivers:
-            receiver.notify_end(*o)
+            t = threading.Thread(target=receiver.notify_end, args=o, daemon=True)
+            t.start()
+            self.threads.append(t)
+        while True:
+            if self.all_dead():
+                self.threads = []
+                break
+            sleep(.1)
+
+    def all_dead(self):
+        for t in self.threads:
+            if t.is_alive():
+                return False
+        return True
 
 
 observer = Observer()

@@ -31,7 +31,7 @@ class Player:
             self.player.play_wav(o.source)
             logger.info('start to collect log and audio_duration:{0}'.format(audio_duration))
             sleep(corpus_conf.play_separator)
-            observer.on_notify(o)
+            observer.notify_end(o)
             logger.info('play cmd:{0} finish...'.format(cmd_str))
         else:
             logger.info('audio source may be error, type:{0}'.format(type(o)))

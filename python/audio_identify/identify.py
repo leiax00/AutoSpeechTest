@@ -43,7 +43,7 @@ class AudioIdentify:
         :type c: audio_identify.collector.Collector
         """
         if isinstance(c, Collector):
-            c.start()
+            # c.start()  # 播放与采集同线程时，不启动
             self.collectors.append(c)
         else:
             logger.warn('invalid collector..., c:{0}'.format(c))
