@@ -4,6 +4,7 @@
 """
 import json
 import os
+import re
 import sys
 import urllib
 
@@ -74,9 +75,32 @@ def get_cmd_list(fp):
     return [line.strip('\r\t\n') for line in lines]
 
 
+def combine_path(base, *path1):
+    r = base
+    for p in path1:
+        r = os.path.join(r, *re.split(r'[/\\]', p))
+    return r
+
+
+def generate_auto_test_wav_file(rp, summary_info_dir):
+    d = {}
+    with open(os.path.join(summary_info_dir, 'summary_info.txt'), 'r', encoding='utf-8') as rf:
+        lines = rf.readlines()
+        for line in lines:
+            es = line.split('\t')
+            d[es[0]] = d.get(es[0]) or []
+            name = os.path.basename(es[1].strip()).replace('.wav', '')
+            tmp = {'aid': name, 'content': es[0], 'source': combine_path(rp, es[1].strip())}
+            d[es[0]].append(tmp.__str__())
+    with open(os.path.join(summary_info_dir, 'auto_test_wav.json'), 'w+', encoding='utf-8') as wf:
+        json.dump(d, wf, indent=4, ensure_ascii=False)
+
+
 if __name__ == '__main__':
-    # python3 /corpus/common/script-new/tts_audio_synthesis_4_corpus.py /corpus/project/matong/corpus.txt /corpus/project/matong/tts_test speaker1&speaker2&....
+    # python3 /corpus/common/script-new/tts_audio_synthesis_4_corpus.py
+    #           /corpus/project/matong/corpus.txt /corpus/project/matong/tts_test speaker1&speaker2&....
     num = len(sys.argv)
+    remote_path = r'\\192.168.1.8'
     file_path = sys.argv[1] if num >= 2 else ''
     op = sys.argv[2] if num >= 3 else os.path.dirname(__file__)
     spk_l = sys.argv[3].split('&') if num >= 4 else ['Xiaoyun', 'Siqi', 'Amei', 'Aixia', 'Xiaogang', 'Xiaowei',
@@ -84,3 +108,4 @@ if __name__ == '__main__':
     c_l = get_cmd_list(file_path)
     for spk in spk_l:
         synthesis_audio(c_l, op, speaker=spk)
+    generate_auto_test_wav_file(remote_path, op)
