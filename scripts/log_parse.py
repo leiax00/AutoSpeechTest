@@ -37,13 +37,14 @@ class DefaultDecoder(JSONEncoder):
 
 
 class LogParse:
-    def __init__(self, log_path, play_wp):
+    def __init__(self, log_path, play_wp, mapping_d):
         self.play_wp = play_wp
         self.play_wd = {}
         self.log_path = log_path
         self.log_info = {}
         self.crst = {}
         self.load_play_wav()
+        self.mapping_d = mapping_d
 
     def parse_log(self):
         with open(self.log_path, 'r', encoding='utf-8') as rf:
@@ -61,7 +62,7 @@ class LogParse:
                         log_rst = re.match(log_re_str, log)
                         if log_rst is not None:
                             rc_list.append(log_rst.group(1))
-                    if play_cmd not in rc_list:
+                    if (self.mapping_d.get(play_cmd) or play_cmd) not in rc_list:
                         self.crst[play_cmd] = self.crst.get(play_cmd) or []
                         if self.play_wd.get(wav_name) not in self.crst[play_cmd]:
                             self.crst[play_cmd].append(self.play_wd.get(wav_name))
@@ -87,6 +88,24 @@ class LogParse:
 
 
 if __name__ == '__main__':
-    wp = r'D:\code\myTools\python\lehua_matong_tts_10.json'
-    lp = r'C:\Users\Administrator\Desktop\tmp\matong_0207_tdnnf_white_test_log.log'
-    LogParse(lp, wp).parse_log()
+    wp = r'\\192.168.1.8\corpus\project\bslight\tts_test\auto_test_wav.json'
+    lp = r'C:\Users\Administrator\Desktop\bstd_result\bslight_191220_test_log.log'
+    mapping_dict = {
+        '阅读模式': '阅读模式',
+        '关闭台灯': '关安闭台灯',
+        '绘画模式': '绘画模式',
+        '你好博士': '你好博士',
+        '博士关灯': '博士关安灯',
+        '音量增大': '音量增大',
+        '博士开灯': '博士开挨灯',
+        '再亮一点': '再亮连一点',
+        '音量减小': '音量减小',
+        '睡眠模式': '睡眠模式',
+        '打开台灯': '打开挨台灯',
+        '调暗一点': '调暗暗一点',
+        '书写模式': '书乌写模式',
+        '调亮一点': '调亮连一点',
+        '博士你好': '博士你好',
+        '再暗一点': '再暗暗一点'
+    }
+    LogParse(lp, wp, mapping_dict).process()
