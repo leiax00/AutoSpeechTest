@@ -46,7 +46,6 @@ class LogParse:
         self.load_play_wav()
 
     def parse_log(self):
-        pass
         with open(self.log_path, 'r', encoding='utf-8') as rf:
             for line in rf:
                 re_str = r'cmd_info: (.*):(.*) -> log: (.*)'

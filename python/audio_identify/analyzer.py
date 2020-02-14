@@ -1,12 +1,15 @@
 # coding=utf-8
 import os
+import re
 import threading
 from time import sleep
 
 from audio_identify.asr_queue import aq
 from common.logger import logger
+from common.time_util import format_time
 from conf.config import corpus_conf
-from obj.default_log_obj import parse_default_log
+from obj.audio_obj import AudioObj
+from obj.default_log_obj import parse_default_log, write_default_log_2_csv
 
 
 class Analyzer(threading.Thread):
@@ -45,3 +48,33 @@ class Analyzer(threading.Thread):
     def remove(self):
         self.__start = False
         logger.info('success to close Analyzer thread, status:{0}'.format(self.__start))
+
+
+if __name__ == '__main__':
+    """
+    手动分析日志生成csv结果
+    """
+    log_path = r'C:\Users\Administrator\Desktop\bstd_result\bslight_191220_test_log.log'
+
+
+    class Service:
+        def __init__(self):
+            self.can_write = True
+
+    corpus_conf.load_conf()
+    s = Service()
+    threading.Thread(target=write_default_log_2_csv, args=(s,), daemon=True).start()
+    with open(log_path, 'r', encoding='utf-8') as rf:
+        for line in rf:
+            re_str = r'cmd_info: (.*):(.*) -> log: (.*)'
+            rst = re.match(re_str, line)
+            if rst is not None:
+                play_cmd = rst.group(1)
+                wav_name = rst.group(2)
+                log_info = rst.group(3)
+                obj = AudioObj().set_v(wav_name, play_cmd, '')
+                logs = [log.strip() for log in log_info.split('&&')]
+                msg = [format_time(), 'COM12', obj, *logs]
+                parse_default_log(msg)
+    sleep(15)
+    s.can_write = False
