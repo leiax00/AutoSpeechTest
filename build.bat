@@ -16,4 +16,6 @@ xcopy ..\res\application.yml ..\target\AutoSpeechTest\res\ /E/Y
 xcopy ..\res\sox-14-4-2 ..\target\AutoSpeechTest\AutoSpeechTest\ /E/Y
 
 :set work path to project root
+rd /s /q .\build
+del /f /s /q *.spec
 cd ..
