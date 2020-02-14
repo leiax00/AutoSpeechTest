@@ -8,9 +8,18 @@ pip install -r ./requirements.txt
 cd python
 
 :delete software, runtime data and execute result but not delete config
-rd /s /q %version_path%\ast_app
-rd /s /q %version_path%\output
-rd /s /q %version_path%\temp
+set software_p=%version_path%\ast_app
+set output_p=%version_path%\output
+set temp_p=%version_path%\temp
+if exist %software_p% (
+    rd /s /q %software_p%
+)
+if exist %output_p% (
+    rd /s /q %output_p%
+)
+if exist %temp_p% (
+    rd /s /q %temp_p%
+)
 
 :build software
 pyinstaller -D ast_app.py --distpath=%version_path%
