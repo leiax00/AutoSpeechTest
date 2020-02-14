@@ -23,6 +23,6 @@ def init_env():
 
 if __name__ == '__main__':
     init_env()
-    from ui.aca_main import main
+    from ui.ast_ui import main
 
     main()

@@ -18,12 +18,11 @@ from ui.component.combo_checkbox import ComboCheckBox
 from ui.component.load_file import LoadFile
 
 
-class ACAApp(QtWidgets.QDialog):
+class AstUI(QtWidgets.QDialog):
     def __init__(self, parent=None):
-        super(ACAApp, self).__init__(parent)
+        super(AstUI, self).__init__(parent)
         self.__init_data()
         self.__init_ui()
-        self.__init_wav()
 
     def __init_data(self):
         self.service = AudioIdentify()
@@ -174,16 +173,18 @@ class ACAApp(QtWidgets.QDialog):
 
     def output_wav_text(self):
         logger.info('begin to export wav_text...')
+        self.__init_wav()
         name = 'export_thread'
         listen_name = 'listen_{0}'.format(name)
 
-        def export_wav():
+        def export_wav(o):
+            while o.threads['retrieve_wav'].is_alive():
+                sleep(.5)
             self.monitor_label.setText("正在导出中，请勿操作界面！！")
             self.service.output_wav_text()
             self.monitor_label.setText(format(RealMonitor()))
 
-        self.threads[name] = Thread(name=name, target=export_wav, daemon=True)
-
+        self.threads[name] = Thread(name=name, target=export_wav, args=(self,), daemon=True)
         self.threads[listen_name] = Thread(name=listen_name, target=self.listen_play, args=(name, self.out_wav),
                                            daemon=True)
         self.threads[name].start()
@@ -207,14 +208,14 @@ class ACAApp(QtWidgets.QDialog):
         pass
 
     def set_play_count(self):
-        corpus_conf.wav_count_one_cmder = int(self.play_count_box.currentText())
-        logger.info('set play count:%d' % corpus_conf.wav_count_one_cmder)
+        corpus_conf.repeat_play_count = int(self.play_count_box.currentText())
+        logger.info('set play count:%d' % corpus_conf.repeat_play_count)
 
 
 def main():
     print('app start......')
     corpus_conf.load_conf()
     app = QApplication(sys.argv)
-    window = ACAApp()
+    window = AstUI()
     window.show()
     sys.exit(app.exec_())
