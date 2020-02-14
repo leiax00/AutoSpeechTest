@@ -89,15 +89,14 @@ class Player:
             stream.close()
             p.terminate()
             wf.close()
-            # os.remove(tmp_file_path)
+            os.remove(tmp_file_path)
 
         def deal_voice(self, filename):
-            copy_path = shutil.copy(filename, corpus_conf.temp_path)
-            dst_f = os.path.join(corpus_conf.temp_path, '{0}.wav'.format(os.path.basename(copy_path)))
-            v_adjustment = float(self.transformer.stat(copy_path).get('Volume adjustment')) or 1.0
+            dst_f = os.path.join(corpus_conf.temp_path, os.path.basename(filename))
+            v_adjustment = float(self.transformer.stat(filename).get('Volume adjustment')) or 1.0
             logger.info('voice increment:{0}, wav_path:{1}'.format(v_adjustment, filename))
             self.transformer.vol(v_adjustment)
-            self.transformer.build(copy_path, dst_f)
+            self.transformer.build(filename, dst_f)
             self.transformer.clear_effects()
             return dst_f
 
