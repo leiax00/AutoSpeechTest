@@ -20,13 +20,18 @@ class DefaultLogIn:
         self.wav_obj = obj_l[2]
         self.log_l = obj_l[3:] if len(obj_l) > 3 else []
 
-    def parse_log(self, r):
+    def parse_log(self, o):
+        one_wav_rst = ('', '')
         for one_log in self.log_l:
             one_log = str(one_log)
             info = re.match(r'.*decode result is ([^ ]*) ([\d.-]*):[^ ]* ([\d.-]*):[^ ]* ([\d.-]*):[^ ]*', one_log)
             if info is not None:
-                tmp = r.get(info.group(1)) or DefaultLogItem()
-                tmp.word = info.group(1)
+                cmd_in_log = info.group(1)
+                if cmd_in_log != o.cmd and not (one_wav_rst[0] == '' and one_wav_rst[1] == ''):
+                    logger.info('repeat result:{0}'.format(one_log))
+                    continue
+                tmp = o.items.get(cmd_in_log) or DefaultLogItem()
+                tmp.word = cmd_in_log
                 i = self.get_interval_index(info.group(2), corpus_conf.confidence_list)
                 tmp.confidence[i] = tmp.confidence[i] + 1
                 i = self.get_interval_index(info.group(3), corpus_conf.likelihood_list)
@@ -34,9 +39,10 @@ class DefaultLogIn:
                 i = self.get_interval_index(info.group(4), corpus_conf.svm_list)
                 tmp.svm[i] = tmp.svm[i] + 1
                 tmp.count += 1
-                r[tmp.word] = tmp
+                one_wav_rst = (tmp.word, tmp)
             else:
                 logger.error('invalid log:{0}'.format(one_log))
+        o.items[one_wav_rst[0]] = one_wav_rst[1]
 
     @staticmethod
     def get_interval_index(v, interval_l):
@@ -111,7 +117,7 @@ def parse_default_log(obj_l):
     log_output.cmd = cmd
     log_output.com = com
     log_output.count = log_output.count + 1
-    log_obj.parse_log(log_output.items)
+    log_obj.parse_log(log_output)
     log_output.rate = '%.4f' % float(log_output.get_right_count() / log_output.count)
     result_map[log_output.com][log_output.cmd] = log_output
 
