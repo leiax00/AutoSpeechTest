@@ -1,6 +1,10 @@
 :set dist path
 set version_path=..\target\AutoSpeechTest
 
+:ready env
+python -m pip install --upgrade pip
+pip install -r ./requirements.txt
+
 cd python
 
 :delete software, runtime data and execute result but not delete config
