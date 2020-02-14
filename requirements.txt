@@ -1,0 +1,7 @@
+pyserial
+paramiko
+PyYAML
+PyQt5
+pydub
+pyaudio
+sox

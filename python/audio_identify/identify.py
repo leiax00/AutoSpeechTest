@@ -104,6 +104,7 @@ class AudioIdentify:
             collector.remove()
         for analyzer in self.analyzers:
             analyzer.remove()
+        self.player.set_play(False)
         self.can_write = False
 
     def process(self):

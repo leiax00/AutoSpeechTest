@@ -20,10 +20,6 @@ if __name__ == '__main__':
     tfm = sox.Transformer()
     adjust_voice(tfm, wav_path1, 'output1.wav')
     adjust_voice(tfm, wav_path2, 'output2.wav')
-# 3.747
-# 1.481
-# 3.747
-# 5.549
     # # create combiner
     # cbn = sox.Combiner()
     # # pitch shift combined audio up 3 semitones
