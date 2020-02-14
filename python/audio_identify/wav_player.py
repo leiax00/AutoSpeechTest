@@ -4,10 +4,9 @@ import shutil
 import wave
 from time import sleep
 
-import numpy as np
 import pyaudio
+import sox
 from pydub import AudioSegment
-from scipy.io import wavfile
 
 from audio_identify.emit.emiter import observer
 from common.logger import logger
@@ -28,7 +27,7 @@ class Player:
         logger.info('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
         if isinstance(o, AudioObj):
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
-            self.player.play_wav(o.source)
+            self.player.play_wav(o.source, True)
             logger.info('start to collect log and audio_duration:{0}'.format(audio_duration))
             sleep(corpus_conf.play_separator)
             observer.notify_end(o)
@@ -65,9 +64,12 @@ class Player:
                 self.play_batch_mode1(wav_list, cmd_str, repeat_play_count)  # repeat_play_count === 1
 
     class _Player:
-        def play_wav(self, wav_name, voice_same=False):
-            if voice_same:
-                self.deal_voice(wav_name)
+        def __init__(self):
+            self.transformer = sox.Transformer()
+
+        def play_wav(self, wav_name, need_voice_same=False):
+            if need_voice_same:
+                tmp_file_path = self.deal_voice(wav_name)
             else:
                 tmp_file_path = shutil.copy(wav_name, corpus_conf.temp_path)
             chunk = 1024
@@ -87,14 +89,17 @@ class Player:
             stream.close()
             p.terminate()
             wf.close()
-            os.remove(tmp_file_path)
+            # os.remove(tmp_file_path)
 
-        @staticmethod
-        def deal_voice(filename):
-            dst_f = os.path.join(corpus_conf.temp_path, os.path.basename(filename))
-            wav_l = list(wavfile.read(filename))
-            normal_waves = np.array(wav_l[1] / np.max(wav_l[1]) * 32768, dtype=np.int16)
-            wavfile.write(dst_f, wav_l[0], normal_waves)
+        def deal_voice(self, filename):
+            copy_path = shutil.copy(filename, corpus_conf.temp_path)
+            dst_f = os.path.join(corpus_conf.temp_path, '{0}.wav'.format(os.path.basename(copy_path)))
+            v_adjustment = float(self.transformer.stat(copy_path).get('Volume adjustment')) or 1.0
+            logger.info('voice increment:{0}, wav_path:{1}'.format(v_adjustment, filename))
+            self.transformer.vol(v_adjustment)
+            self.transformer.build(copy_path, dst_f)
+            self.transformer.clear_effects()
+            return dst_f
 
     def set_play(self, bol):
         self.__is_play = bool(bol)

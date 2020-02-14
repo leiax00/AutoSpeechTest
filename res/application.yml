@@ -14,8 +14,8 @@ app:
     retrieve_script: python3 /corpus/common/script-new/retrieve_wav.py {0} {1} {2}  # 检索语音的植入脚本， 参数：0:wav_path; 1:wav_schema; 2:cmd_path
   controller:
     wav_count_one_cmder: 5  # 一条命令词的语料数量
-    play_mode: 2  # 1: 单条命令词所有语料读完循环；2：单条命令词单条语音读完循环；3：所有命令词所有语料读完循环；
-    repeat_play_count: 20  # 一条语料的播放次数
+    play_mode: 1  # 1: 单条命令词所有语料读完循环；2：单条命令词单条语音读完循环；3：所有命令词所有语料读完循环；
+    repeat_play_count: 1  # 一条语料的播放次数
     play_separator: 1  # 每次播放的时间间隔，单位: 秒
   log:
     log_filter:  # 日志的过滤关键字，出现在以下列表中关键字的日志，均不会被采集
