@@ -23,7 +23,7 @@ class DefaultLogIn:
     def parse_log(self, r):
         for one_log in self.log_l:
             one_log = str(one_log)
-            info = re.match(r'.*decode result is ([^ ]*) ([\d.]*):[^ ]* ([\d.]*):[^ ]* ([\d.]*):[^ ]*', one_log)
+            info = re.match(r'.*decode result is ([^ ]*) ([\d.-]*):[^ ]* ([\d.-]*):[^ ]* ([\d.-]*):[^ ]*', one_log)
             if info is not None:
                 tmp = r.get(info.group(1)) or DefaultLogItem()
                 tmp.word = info.group(1)

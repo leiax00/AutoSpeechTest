@@ -58,7 +58,7 @@ class LogParse:
                     logs = log_info.split(' && ')
                     rc_list = []
                     for log in logs:
-                        log_re_str = r'.*decode result is ([^ ]*) ([\d.]*):[^ ]* ([\d.]*):[^ ]* ([\d.]*):[^ ]*'
+                        log_re_str = r'.*decode result is ([^ ]*) ([\d.-]*):[^ ]* ([\d.-]*):[^ ]* ([\d.-]*):[^ ]*'
                         log_rst = re.match(log_re_str, log)
                         if log_rst is not None:
                             rc_list.append(log_rst.group(1))
