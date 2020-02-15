@@ -25,7 +25,7 @@ if exist %temp_p% (
 pyinstaller -D ast_app.py --distpath=%version_path%
 
 :copy config and replace old config
-xcopy ..\res\application.yml ..\target\AutoSpeechTest\res\ /E/Y
+copy ..\res\application.yml ..\target\AutoSpeechTest\res\ /E/Y
 xcopy ..\res\sox-14-4-2 ..\target\AutoSpeechTest\ast_app\ /E/Y
 
 :set work path to project root
