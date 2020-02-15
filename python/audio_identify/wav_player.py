@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import shutil
+import traceback
 import wave
 from time import sleep
 
@@ -93,12 +94,17 @@ class Player:
 
         def deal_voice(self, filename):
             dst_f = os.path.join(corpus_conf.temp_path, os.path.basename(filename))
-            v_adjustment = float(self.transformer.stat(filename).get('Volume adjustment')) or 1.0
-            logger.info('voice increment:{0}, wav_path:{1}'.format(v_adjustment, filename))
-            self.transformer.vol(v_adjustment)
-            self.transformer.build(filename, dst_f)
-            self.transformer.clear_effects()
-            return dst_f
+            try:
+                v_adjustment = float(self.transformer.stat(filename).get('Volume adjustment')) or 1.0
+                logger.info('voice increment:{0}, wav_path:{1}'.format(v_adjustment, filename))
+                self.transformer.vol(v_adjustment)
+                self.transformer.build(filename, dst_f)
+                self.transformer.clear_effects()
+                return dst_f
+            except Exception as e:
+                logger.warn('Failed to adjust volume, use origin wav. err: {0}, {1}'.format(e, traceback.format_exc()))
+                os.remove(dst_f)
+                return shutil.copy(filename, corpus_conf.temp_path)
 
     def set_play(self, bol):
         self.__is_play = bool(bol)
