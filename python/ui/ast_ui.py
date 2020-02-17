@@ -1,4 +1,6 @@
 # coding=utf-8
+import os
+import shutil
 import sys
 from threading import Thread
 from time import sleep
@@ -110,8 +112,8 @@ class AstUI(QtWidgets.QDialog):
         self.status_btn.clicked.connect(self.status_change)
         self.out_wav = QtWidgets.QPushButton('输出语料')
         self.out_wav.clicked.connect(self.output_wav_text)
-        self.result_btn = QtWidgets.QPushButton('查看报告')
-        self.result_btn.clicked.connect(self.look_result)
+        self.result_btn = QtWidgets.QPushButton('上传结果')
+        self.result_btn.clicked.connect(self.upload_result)
         a.addWidget(emp)
         a.addWidget(self.start_btn)
         a.addWidget(self.status_btn)
@@ -203,9 +205,10 @@ class AstUI(QtWidgets.QDialog):
             o.setEnabled(True)
             logger.info('%s end....' % name)
 
-    def look_result(self):
-        logger.info('output_wav_text')
-        pass
+    def upload_result(self):
+        logger.info('upload result to server....')
+        mv_dir = shutil.move(corpus_conf.output_path, corpus_conf.remote_result_dir)
+        os.rename(mv_dir, corpus_conf.get_remote_result_dir())
 
     def set_play_count(self):
         corpus_conf.repeat_play_count = int(self.play_count_box.currentText())

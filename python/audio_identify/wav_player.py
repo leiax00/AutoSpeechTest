@@ -28,7 +28,7 @@ class Player:
         logger.info('play cmd:{0}, and wav:{1}'.format(cmd_str, o))
         if isinstance(o, AudioObj):
             audio_duration = len(AudioSegment.from_wav(o.source)) / 1000
-            self.player.play_wav(o.source, True)
+            self.player.play_wav(o.source, corpus_conf.amplify_volume)
             logger.info('start to collect log and audio_duration:{0}'.format(audio_duration))
             sleep(corpus_conf.play_separator)
             observer.notify_end(o)

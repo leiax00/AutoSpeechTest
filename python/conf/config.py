@@ -4,7 +4,8 @@ import os
 import yaml
 
 from audio_identify.filter.log_filter import LogFilter
-from common.time_util import format_time, format_2
+from common.path_helper import combine_path
+from common.time_util import format_time, format_2, format_3
 
 
 class CorpusConf:
@@ -19,6 +20,7 @@ class CorpusConf:
         self.remote_password = ''
 
         self.remote_base = r''
+        self.remote_result_dir = r''
         self.cmd_path = r''
 
         self.wav_path = r''
@@ -29,7 +31,9 @@ class CorpusConf:
         self.wav_count_one_cmder = 1
         self.play_mode = 1
         self.repeat_play_count = 1
+        self.amplify_volume = True
         self.play_separator = 2  # 语音播报间隔
+
         self.log_filter = LogFilter()  # 过滤掉包含关键字的日志
         self.soft_root = os.path.join(os.path.dirname(__file__), '..', '..')
         self.output_path = os.path.join(self.soft_root, 'output')
@@ -44,6 +48,15 @@ class CorpusConf:
 
         self.start_time = format_time(time_formatter=format_2)
 
+    def get_remote_result_dir(self):
+        template_name = '{0}_result_{1}'
+        basename = template_name.format(self.product, format_time(time_formatter=format_3))
+        dst = os.path.join(self.remote_result_dir, basename)
+        if os.path.exists(dst):
+            dst = os.path.join(self.remote_result_dir,
+                               template_name.format(self.product, format_time(time_formatter=format_2)))
+        return dst
+
     def load_conf(self, p=None):
         if p is None:
             p = os.path.join(self.soft_root, 'res', 'application.yml')
@@ -56,16 +69,19 @@ class CorpusConf:
         self.confidence_list = conf['app']['interval']['confidence']
 
         self.remote_base = conf['app']['remote_base']
+        self.remote_result_dir = combine_path(self.remote_base, conf['app']['remote_result_dir'])
         self.cmd_path = conf['app']['cmd_path']
         self.wav_path = conf['app']['wav']['wav_path']
         self.wav_schema = conf['app']['wav']['wav_schema']
         self.wav_load_mode = int(conf['app']['wav']['load_mode'])
-        self.retrieve_script = conf['app']['wav']['retrieve_script'].format(self.wav_path.replace('\\', '/'), '&'.join(self.wav_schema),
+        self.retrieve_script = conf['app']['wav']['retrieve_script'].format(self.wav_path.replace('\\', '/'),
+                                                                            '&'.join(self.wav_schema),
                                                                             self.cmd_path.replace('\\', '/'))
 
         self.wav_count_one_cmder = conf['app']['controller']['wav_count_one_cmder']
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
         self.play_mode = conf['app']['controller']['play_mode']
+        self.amplify_volume = bool(conf['app']['controller']['amplify_volume'])
         self.play_separator = conf['app']['controller']['play_separator']
 
         self.log_filter = LogFilter(conf['app']['log']['log_filter'])
@@ -82,6 +98,7 @@ class CorpusConf:
         print('success to load application.yml')
 
 
+# 命令词映射， eg: 晚安:晚安安
 cmd_mapping = {
 
 }

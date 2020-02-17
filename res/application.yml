@@ -5,6 +5,7 @@ app:
     username: root
     password:  root
   remote_base: \\192.168.1.8  # 远程服务器的路径，本地请配置卷标
+  remote_result_dir: \sdb\backup\auto_test  # 结果上传路径
   cmd_path: \corpus\project\mddc\res\config.json  # 命令词路径
   wav:
     load_mode: 1  # 1表示输入语料目录， 2表示输入wav.scp和text的目录
@@ -17,6 +18,7 @@ app:
     play_mode: 1  # 1: 单条命令词所有语料读完循环；2：单条命令词单条语音读完循环；3：所有命令词所有语料读完循环；
     repeat_play_count: 1  # 一条语料的播放次数
     play_separator: 1  # 每次播放的时间间隔，单位: 秒
+    amplify_volume: true # 是否放大音量，true：放大，false：不放大
   log:
     log_filter:  # 日志的过滤关键字，出现在以下列表中关键字的日志，均不会被采集
       - agc handler
