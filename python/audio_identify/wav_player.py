@@ -103,7 +103,8 @@ class Player:
                 return dst_f
             except Exception as e:
                 logger.warn('Failed to adjust volume, use origin wav. err: {0}, {1}'.format(e, traceback.format_exc()))
-                os.remove(dst_f)
+                if os.path.exists(dst_f):
+                    os.remove(dst_f)
                 return shutil.copy(filename, corpus_conf.temp_path)
 
     def set_play(self, bol):
