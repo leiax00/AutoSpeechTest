@@ -92,12 +92,12 @@ auto_test_spks = [
 ]
 
 
-def synthesis_audio(cmd_l, output_path=os.path.dirname(__file__), spk_type='a', spk='Siqi', cmd_count_of_one_req=5):
+def synthesis_audio(cmd_l, output_path=os.path.dirname(__file__), spk_type='a', speaker='Siqi', cmd_count_of_one_req=5):
     """
     :param output_path: 输出路径
     :param cmd_count_of_one_req: 一次请求的命令词数量
     :param spk_type: 说话人类型
-    :param spk: 说话人
+    :param speaker: 说话人
     :type cmd_l: list
     """
     output_path = os.path.join(output_path, 'origin')
@@ -112,20 +112,20 @@ def synthesis_audio(cmd_l, output_path=os.path.dirname(__file__), spk_type='a', 
         else:
             tmp = cmd_l[i * cmd_count_of_one_req: (i + 1) * cmd_count_of_one_req]
         text = urllib.request.quote('<break time="500ms"/>'.join(tmp))
-        req_url = url_template.format(spk_type, text, spk)
+        req_url = url_template.format(spk_type, text, speaker)
         resp = requests.get(req_url)
         remaining_times = json.loads(json.dumps(dict(resp.headers))).get('Total-count')
         if int(remaining_times) <= 1000:
             print('*' * 30, '\nremaining_times is not enough, times:{0}, url:{1}'.format(remaining_times, req_url),
                   '*' * 30)
         if spk_type == 'a':
-            filename = '{0}_{1}.wav'.format(spk.lower(), i + 1)
+            filename = '{0}_{1}.wav'.format(speaker.lower(), i + 1)
         else:
-            filename = '{0}{1}_{2}.wav'.format(spk_type, spk, i + 1)
+            filename = '{0}{1}_{2}.wav'.format(spk_type, speaker, i + 1)
         output_file = os.path.join(output_path, filename)
         urllib.request.urlretrieve(req_url, output_file)
         if os.path.exists(output_file):
-            split_wav(tmp, output_file, spk, i * cmd_count_of_one_req)
+            split_wav(tmp, output_file, speaker, i * cmd_count_of_one_req)
         else:
             print('failed to synthesis wav. cmd:{0}, file:{1}'.format(tmp, output_file))
 
@@ -199,7 +199,7 @@ def synthesis_all_spk_wav(cmd_l, output_p):
 
 
 def is_auto_test_spk(aid, spks):
-    new_spks = [spk.lower() for spk in spks]
+    new_spks = [speaker.lower() for speaker in spks]
     real_spk = aid.split('_')[0]
     rm = re.match(r'[bc](\d*)', real_spk)
     if rm is not None:
