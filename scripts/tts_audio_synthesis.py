@@ -191,11 +191,11 @@ def generate_auto_test_wav_file(rp, summary_info_dir):
 
 def synthesis_all_spk_wav(cmd_l, output_p):
     for speaker in type_a:
-        synthesis_audio(cmd_l, output_p, spk_type='a', spk=str(speaker))
+        synthesis_audio(cmd_l, output_p, spk_type='a', speaker=str(speaker))
     # for speaker in type_b:
-    #     synthesis_audio(cmd_l, output_p, spk_type='b', spk=str(speaker))
+    #     synthesis_audio(cmd_l, output_p, spk_type='b', speaker=str(speaker))
     # for speaker in type_c:
-    #     synthesis_audio(cmd_l, output_p, spk_type='c', spk=str(speaker))
+    #     synthesis_audio(cmd_l, output_p, spk_type='c', speaker=str(speaker))
 
 
 def is_auto_test_spk(aid, spks):
@@ -248,7 +248,7 @@ if __name__ == '__main__':
     # ================= tts语音合成 ==================
     if num >= 4:
         for spk in sys.argv[3].split('&'):
-            synthesis_audio(c_l, op, spk=spk)
+            synthesis_audio(c_l, op, speaker=spk)
     else:
         synthesis_all_spk_wav(c_l, op)
 
