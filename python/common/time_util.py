@@ -9,6 +9,7 @@ one_day = 24 * one_hour
 format_1 = "%Y-%m-%d %H:%M:%S"
 format_2 = "%Y%m%d%H%M%S"
 format_3 = "%y%m%d"
+format_5 = "%y%m%d%H%M%S"
 format_4 = "%Y-%m-%d %H:%M:%S.%f"
 
 

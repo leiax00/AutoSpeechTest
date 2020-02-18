@@ -4,8 +4,7 @@ import os
 import yaml
 
 from audio_identify.filter.log_filter import LogFilter
-from common.path_helper import combine_path
-from common.time_util import format_time, format_2, format_3
+from common.time_util import format_time, format_2
 
 
 class CorpusConf:
@@ -48,15 +47,6 @@ class CorpusConf:
 
         self.start_time = format_time(time_formatter=format_2)
 
-    def get_remote_result_dir(self):
-        template_name = '{0}_result_{1}'
-        basename = template_name.format(self.product, format_time(time_formatter=format_3))
-        dst = os.path.join(self.remote_result_dir, basename)
-        if os.path.exists(dst):
-            dst = os.path.join(self.remote_result_dir,
-                               template_name.format(self.product, format_time(time_formatter=format_2)))
-        return dst
-
     def load_conf(self, p=None):
         if p is None:
             p = os.path.join(self.soft_root, 'res', 'application.yml')
@@ -69,7 +59,7 @@ class CorpusConf:
         self.confidence_list = conf['app']['interval']['confidence']
 
         self.remote_base = conf['app']['remote_base']
-        self.remote_result_dir = combine_path(self.remote_base, conf['app']['remote_result_dir'])
+        self.remote_result_dir = conf['app']['remote_result_dir']
         self.cmd_path = conf['app']['cmd_path']
         self.wav_path = conf['app']['wav']['wav_path']
         self.wav_schema = conf['app']['wav']['wav_schema']

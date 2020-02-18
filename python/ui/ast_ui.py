@@ -1,5 +1,4 @@
 # coding=utf-8
-import os
 import shutil
 import sys
 from threading import Thread
@@ -12,6 +11,7 @@ from PyQt5.QtWidgets import QApplication
 
 from audio_identify.identify import AudioIdentify
 from common.logger import logger
+from common.path_helper import get_remote_result_dir_name
 from common.ssh_util import ssh_exec
 from conf.config import corpus_conf
 from conf.load_source import LoadSource
@@ -206,9 +206,8 @@ class AstUI(QtWidgets.QDialog):
             logger.info('%s end....' % name)
 
     def upload_result(self):
-        logger.info('upload result to server....')
-        mv_dir = shutil.move(corpus_conf.output_path, corpus_conf.remote_result_dir)
-        os.rename(mv_dir, corpus_conf.get_remote_result_dir())
+        shutil.copytree(corpus_conf.output_path, get_remote_result_dir_name())
+        logger.info('upload result to server finish....')
 
     def set_play_count(self):
         corpus_conf.repeat_play_count = int(self.play_count_box.currentText())
