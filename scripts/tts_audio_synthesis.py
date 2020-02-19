@@ -158,6 +158,14 @@ def split_wav(cmd_words, wav_file, speaker, index):
 
 
 def get_cmd_list(project_root):
+    if os.path.isfile(project_root):  # 针对corpus.txt格式的语音合成
+        cmd_l = get_cmd_from_corpus(project_root)
+    else:  # 针对传入project根路径的语音合成
+        cmd_l = get_cmd_from_project(project_root)
+    return cmd_l
+
+
+def get_cmd_from_project(project_root):
     cmd_l = []
     conf = os.path.join(project_root, 'res', 'config.json')
     with open(conf, 'r+', encoding='utf-8') as rf:
@@ -165,6 +173,12 @@ def get_cmd_list(project_root):
         for item in tmp.get('words'):
             if item.get('type') == 'cmd':
                 cmd_l.append(item.get('word'))
+    return cmd_l
+
+
+def get_cmd_from_corpus(project_root):
+    with open(project_root, 'r+', encoding='utf-8') as rf:
+        cmd_l = [line.strip('\r\t\n') for line in rf.readlines()]
     return cmd_l
 
 
@@ -252,9 +266,11 @@ if __name__ == '__main__':
     else:
         synthesis_all_spk_wav(c_l, op)
 
-    # ================= 生成所有speaker的tts语音的测试语料集 ==================
-    generate_auto_test_wav_file(remote_path, op)
+    flag = input(r'是否生成自动化测试所用的测试语料集[Y/N]:')
+    if flag is not None and flag.lower() == 'y':
+        # ================= 生成所有speaker的tts语音的测试语料集 ==================
+        generate_auto_test_wav_file(remote_path, op)
 
-    # ================= 生成指定speaker的tts语音的测试语料集 ==================
-    # ================= 测试语料选中speaker修改变量: auto_test_spks ===========
-    filter_4_auto_test(remote_path, op, project_dir)
+        # ================= 生成指定speaker的tts语音的测试语料集 ==================
+        # ================= 测试语料选中speaker修改变量: auto_test_spks ===========
+        filter_4_auto_test(remote_path, op, project_dir)
