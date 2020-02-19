@@ -87,8 +87,8 @@ auto_test_spks = [
     'Aiyue',
     'Aijing',
     'Aina',
-    'Aiwei',
-    'Aibao',
+    'c103',
+    'c110',
 ]
 
 
@@ -125,12 +125,12 @@ def synthesis_audio(cmd_l, output_path=os.path.dirname(__file__), spk_type='a', 
         output_file = os.path.join(output_path, filename)
         urllib.request.urlretrieve(req_url, output_file)
         if os.path.exists(output_file):
-            split_wav(tmp, output_file, speaker, i * cmd_count_of_one_req)
+            split_wav(tmp, output_file, spk_type, speaker, i * cmd_count_of_one_req)
         else:
             print('failed to synthesis wav. cmd:{0}, file:{1}'.format(tmp, output_file))
 
 
-def split_wav(cmd_words, wav_file, speaker, index):
+def split_wav(cmd_words, wav_file, spk_type, speaker, index):
     print('start to split wav:{0}'.format(wav_file))
     try:
         wav_root_dir = os.path.join(os.path.dirname(os.path.dirname(wav_file)), 'wav')
@@ -147,7 +147,7 @@ def split_wav(cmd_words, wav_file, speaker, index):
             for i in range(len(chunks)):
                 index += 1
                 new = chunks[i]
-                wav_p = os.path.join(wav_root_dir, '{0}_{1}.wav'.format(speaker.lower(), index))
+                wav_p = os.path.join(wav_root_dir, '{0}{1}_{2}.wav'.format(spk_type, speaker.lower(), index))
                 new.export(wav_p, format='wav')
                 with open(wav_p.replace('.wav', '.txt'), 'w+', encoding='utf-8') as wf:
                     wf.write(cmd_words[i])
@@ -208,16 +208,13 @@ def synthesis_all_spk_wav(cmd_l, output_p):
         synthesis_audio(cmd_l, output_p, spk_type='a', speaker=str(speaker))
     # for speaker in type_b:
     #     synthesis_audio(cmd_l, output_p, spk_type='b', speaker=str(speaker))
-    # for speaker in type_c:
-    #     synthesis_audio(cmd_l, output_p, spk_type='c', speaker=str(speaker))
+    for speaker in type_c:
+        synthesis_audio(cmd_l, output_p, spk_type='c', speaker=str(speaker))
 
 
 def is_auto_test_spk(aid, spks):
     new_spks = [speaker.lower() for speaker in spks]
     real_spk = aid.split('_')[0]
-    rm = re.match(r'[bc](\d*)', real_spk)
-    if rm is not None:
-        real_spk = int(rm.group(1))
     return True if real_spk in new_spks else False
 
 
