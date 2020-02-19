@@ -149,6 +149,8 @@ class AstUI(QtWidgets.QDialog):
             return
         logger.info('set wav path: %s' % wav_path)
         self.service.wav_mapping = LoadSource().parse_wav(wav_path, corpus_conf.wav_count_one_cmder)
+        if os.path.isfile(wav_path):
+            shutil.copy(wav_path, corpus_conf.output_path)
         self.start_btn.setEnabled(True)
 
     def select_coms(self, com_l):
@@ -207,9 +209,7 @@ class AstUI(QtWidgets.QDialog):
             logger.info('%s end....' % name)
 
     def upload_result(self):
-        archive_dir = get_remote_result_dir_name()
-        shutil.copytree(corpus_conf.output_path, archive_dir)
-        shutil.copytree(os.path.join(corpus_conf.soft_root, 'res'), os.path.join(archive_dir, 'res'))
+        shutil.copytree(corpus_conf.output_path, get_remote_result_dir_name())
         logger.info('upload result to server finish....')
 
     def set_play_count(self):
