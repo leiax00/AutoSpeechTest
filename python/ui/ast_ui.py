@@ -1,4 +1,5 @@
 # coding=utf-8
+import os
 import shutil
 import sys
 from threading import Thread
@@ -206,7 +207,9 @@ class AstUI(QtWidgets.QDialog):
             logger.info('%s end....' % name)
 
     def upload_result(self):
-        shutil.copytree(corpus_conf.output_path, get_remote_result_dir_name())
+        archive_dir = get_remote_result_dir_name()
+        shutil.copytree(corpus_conf.output_path, archive_dir)
+        shutil.copytree(os.path.join(corpus_conf.soft_root, 'res'), os.path.join(archive_dir, 'res'))
         logger.info('upload result to server finish....')
 
     def set_play_count(self):
