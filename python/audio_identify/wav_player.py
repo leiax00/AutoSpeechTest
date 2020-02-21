@@ -49,6 +49,14 @@ class Player:
                 self.play(o, cmd_str)
                 count -= 1
 
+    def play_batch(self, o_list, cmd_str='', repeat_play_count=corpus_conf.repeat_play_count):
+        if corpus_conf.play_mode == 1:
+            self.play_batch_mode1(o_list, cmd_str, repeat_play_count)
+        elif corpus_conf.play_mode == 2:
+            self.play_batch_mode2(o_list, cmd_str, repeat_play_count)
+        elif corpus_conf.play_mode == 3:
+            self.play_batch_mode1(o_list, cmd_str, repeat_play_count)  # repeat_play_count === 1
+
     def play_all(self, o_dict, repeat_play_count):
         """
         :type o_dict: dict
@@ -56,13 +64,16 @@ class Player:
         :param repeat_play_count: 单条命令重复次数（每次的音频不一样，内容一样）
         :return:
         """
+        wake_wav = ''
+        if corpus_conf.first_read is not None and corpus_conf.first_read != '':
+            wake_wav = o_dict.pop(corpus_conf.first_read)
+            self.play_batch(wake_wav, corpus_conf.first_read, repeat_play_count)
+
         for cmd_str, wav_list in o_dict.items():
-            if corpus_conf.play_mode == 1:
-                self.play_batch_mode1(wav_list, cmd_str, repeat_play_count)
-            elif corpus_conf.play_mode == 2:
-                self.play_batch_mode2(wav_list, cmd_str, repeat_play_count)
-            elif corpus_conf.play_mode == 3:
-                self.play_batch_mode1(wav_list, cmd_str, repeat_play_count)  # repeat_play_count === 1
+            self.play_batch(wav_list, cmd_str, repeat_play_count)
+
+        if wake_wav != '':
+            o_dict[corpus_conf.first_read] = wake_wav
 
     class _Player:
         def __init__(self):

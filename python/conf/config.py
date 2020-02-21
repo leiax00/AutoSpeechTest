@@ -32,6 +32,7 @@ class CorpusConf:
         self.repeat_play_count = 1
         self.amplify_volume = True
         self.play_separator = 2  # 语音播报间隔
+        self.first_read = ''
 
         self.log_filter = LogFilter()  # 过滤掉包含关键字的日志
         self.soft_root = os.path.join(os.path.dirname(__file__), '..', '..')
@@ -68,6 +69,7 @@ class CorpusConf:
                                                                             '&'.join(self.wav_schema),
                                                                             self.cmd_path.replace('\\', '/'))
 
+        self.first_read = conf['app']['controller']['first_read']
         self.wav_count_one_cmder = conf['app']['controller']['wav_count_one_cmder']
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
         self.play_mode = conf['app']['controller']['play_mode']
