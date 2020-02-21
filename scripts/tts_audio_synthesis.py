@@ -157,18 +157,18 @@ def split_wav(cmd_words, wav_file, spk_type, speaker, index):
         print('error happen: {0}, detail:{1}'.format(e, traceback.format_exc()))
 
 
-def get_cmd_list(project_root):
-    if os.path.isfile(project_root):  # 针对corpus.txt格式的语音合成
-        cmd_l = get_cmd_from_corpus(project_root)
+def get_cmd_list(cmd_p):
+    if os.path.isfile(cmd_p):  # 针对corpus.txt / conf.json格式的语音合成
+        cmd_l = get_cmd_from_json(cmd_p) if os.path.basename(cmd_p).endswith(
+            '.json') else get_cmd_from_text(cmd_p)
     else:  # 针对传入project根路径的语音合成
-        cmd_l = get_cmd_from_project(project_root)
+        cmd_l = get_cmd_from_json(os.path.join(cmd_p, 'res', 'config.json'))
     return cmd_l
 
 
-def get_cmd_from_project(project_root):
+def get_cmd_from_json(p):
     cmd_l = []
-    conf = os.path.join(project_root, 'res', 'config.json')
-    with open(conf, 'r+', encoding='utf-8') as rf:
+    with open(p, 'r+', encoding='utf-8') as rf:
         tmp = json.load(rf)
         for item in tmp.get('words'):
             if item.get('type') == 'cmd':
@@ -176,8 +176,8 @@ def get_cmd_from_project(project_root):
     return cmd_l
 
 
-def get_cmd_from_corpus(project_root):
-    with open(project_root, 'r+', encoding='utf-8') as rf:
+def get_cmd_from_text(p):
+    with open(p, 'r+', encoding='utf-8') as rf:
         cmd_l = [line.strip('\r\t\n') for line in rf.readlines()]
     return cmd_l
 
@@ -206,8 +206,8 @@ def generate_auto_test_wav_file(rp, summary_info_dir):
 def synthesis_all_spk_wav(cmd_l, output_p):
     for speaker in type_a:
         synthesis_audio(cmd_l, output_p, spk_type='a', speaker=str(speaker))
-    # for speaker in type_b:
-    #     synthesis_audio(cmd_l, output_p, spk_type='b', speaker=str(speaker))
+    for speaker in type_b:
+        synthesis_audio(cmd_l, output_p, spk_type='b', speaker=str(speaker))
     for speaker in type_c:
         synthesis_audio(cmd_l, output_p, spk_type='c', speaker=str(speaker))
 
