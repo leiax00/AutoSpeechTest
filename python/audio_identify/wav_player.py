@@ -66,8 +66,11 @@ class Player:
         """
         wake_wav = ''
         if corpus_conf.first_read is not None and corpus_conf.first_read != '':
-            wake_wav = o_dict.pop(corpus_conf.first_read)
-            self.play_batch(wake_wav, corpus_conf.first_read, repeat_play_count)
+            try:
+                wake_wav = o_dict.pop(corpus_conf.first_read)
+                self.play_batch(wake_wav, corpus_conf.first_read, repeat_play_count)
+            except KeyError:
+                pass
 
         for cmd_str, wav_list in o_dict.items():
             self.play_batch(wav_list, cmd_str, repeat_play_count)
@@ -127,5 +130,12 @@ class Player:
 
 player = Player()
 if __name__ == '__main__':
-    player.play(r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav')
-    player.play(AudioObj({'source': r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav'}))
+    # player.play(r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav')
+    # player.play(AudioObj({'source': r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav'}))
+    asd = {'a': 'a1', 'b': 'b1'}
+    print(asd.pop('a'))
+    try:
+        print(asd.pop('c'))
+    except KeyError:
+        pass
+    print(asd)
