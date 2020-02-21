@@ -130,12 +130,5 @@ class Player:
 
 player = Player()
 if __name__ == '__main__':
-    # player.play(r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav')
-    # player.play(AudioObj({'source': r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav'}))
-    asd = {'a': 'a1', 'b': 'b1'}
-    print(asd.pop('a'))
-    try:
-        print(asd.pop('c'))
-    except KeyError:
-        pass
-    print(asd)
+    player.play(r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav')
+    player.play(AudioObj({'source': r'\\192.168.1.8/corpus/train/wavs/A1001/A1001_4244.wav'}))
