@@ -68,9 +68,9 @@ class CorpusConf:
         self.retrieve_script = conf['app']['wav']['retrieve_script'].format(self.wav_path.replace('\\', '/'),
                                                                             '&'.join(self.wav_schema),
                                                                             self.cmd_path.replace('\\', '/'))
+        self.wav_count_one_cmder = conf['app']['wav']['wav_count_one_cmder']
 
         self.first_read = conf['app']['controller']['first_read']
-        self.wav_count_one_cmder = conf['app']['controller']['wav_count_one_cmder']
         self.repeat_play_count = conf['app']['controller']['repeat_play_count']
         self.play_mode = conf['app']['controller']['play_mode']
         self.amplify_volume = bool(conf['app']['controller']['amplify_volume'])
