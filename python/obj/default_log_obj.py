@@ -22,26 +22,33 @@ class DefaultLogIn:
 
     def parse_log(self, o):
         one_wav_rst = ('', '')
-        for one_log in self.log_l:
-            one_log = str(one_log)
-            info = re.match(r'.*decode result is ([^ ]*) ([\d.-]*):[^ ]* ([\d.-]*):[^ ]* ([\d.-]*):[^ ]*', one_log)
-            if info is not None:
-                cmd_in_log = info.group(1)
-                if cmd_in_log != o.cmd and not (one_wav_rst[0] == '' and one_wav_rst[1] == ''):
-                    logger.info('repeat result:{0}'.format(one_log))
-                    continue
-                tmp = o.items.get(cmd_in_log) or DefaultLogItem()
-                tmp.word = cmd_in_log
-                i = self.get_interval_index(info.group(2), corpus_conf.confidence_list)
-                tmp.confidence[i] = tmp.confidence[i] + 1
-                i = self.get_interval_index(info.group(3), corpus_conf.likelihood_list)
-                tmp.likelihood[i] = tmp.likelihood[i] + 1
-                i = self.get_interval_index(info.group(4), corpus_conf.svm_list)
-                tmp.svm[i] = tmp.svm[i] + 1
-                tmp.count += 1
-                one_wav_rst = (tmp.word, tmp)
-            else:
-                logger.error('invalid log:{0}'.format(one_log))
+        if len(self.log_l) <= 0:
+            word_rst = 'NULL'
+            tmp = o.items.get(word_rst) or DefaultLogItem()
+            tmp.word = word_rst
+            tmp.count += 1
+            one_wav_rst = (word_rst, tmp)
+        else:
+            for one_log in self.log_l:
+                one_log = str(one_log)
+                info = re.match(r'.*decode result is ([^ ]*) ([\d.-]*):[^ ]* ([\d.-]*):[^ ]* ([\d.-]*):[^ ]*', one_log)
+                if info is not None:
+                    cmd_in_log = info.group(1)
+                    if cmd_in_log != o.cmd and not (one_wav_rst[0] == '' and one_wav_rst[1] == ''):
+                        logger.info('repeat result:{0}'.format(one_log))
+                        continue
+                    tmp = o.items.get(cmd_in_log) or DefaultLogItem()
+                    tmp.word = cmd_in_log
+                    i = self.get_interval_index(info.group(2), corpus_conf.confidence_list)
+                    tmp.confidence[i] = tmp.confidence[i] + 1
+                    i = self.get_interval_index(info.group(3), corpus_conf.likelihood_list)
+                    tmp.likelihood[i] = tmp.likelihood[i] + 1
+                    i = self.get_interval_index(info.group(4), corpus_conf.svm_list)
+                    tmp.svm[i] = tmp.svm[i] + 1
+                    tmp.count += 1
+                    one_wav_rst = (tmp.word, tmp)
+                else:
+                    logger.error('invalid log:{0}'.format(one_log))
         o.items[one_wav_rst[0]] = one_wav_rst[1]
 
     @staticmethod
